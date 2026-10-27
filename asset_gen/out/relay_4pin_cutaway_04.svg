@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"
+     data-asset="relay_4pin" data-curriculum-node="AE/devices/relay"
+     data-view="cutaway@60">
+  <title>4-pin ISO mini relay (Type B)</title>
+  <desc>Contour-traced from the render ID buffer by asset_gen/render3d.py.
+        Geometry is pixel-exact against the PNG of the same view by construction.</desc>
+  <polygon class="part" id="armature" data-area="11703" points="315.0,88.0 377.0,97.0 375.0,244.0 362.0,245.0 362.0,239.0 356.0,238.0 334.0,241.0 332.0,250.0 316.0,251.0 308.0,248.0 308.0,119.0 280.0,113.0 279.0,103.0 255.0,99.0 255.0,89.0 262.0,91.0 275.0,91.0 315.0,88.0"/>
+  <polygon class="part" id="case" data-area="77894" points="336.0,50.0 368.0,50.0 500.0,62.0 490.0,294.0 490.0,298.0 498.0,302.0 497.0,333.0 265.0,379.0 157.0,306.0 156.0,277.0 162.0,275.0 162.0,263.0 154.0,56.0 336.0,50.0"/>
+  <polygon class="part" id="coil" data-area="10037" points="250.0,96.0 253.0,96.0 253.0,99.0 257.0,101.0 279.0,105.0 280.0,114.0 307.0,120.0 307.0,248.0 317.0,253.0 322.0,252.0 326.0,255.0 322.0,258.0 322.0,264.0 303.0,267.0 274.0,267.0 250.0,263.0 240.0,257.0 240.0,244.0 249.0,238.0 248.0,134.0 247.0,114.0 238.0,111.0 237.0,99.0 250.0,96.0"/>
+  <polygon class="part" id="contacts" data-area="1152" points="359.0,239.0 360.0,253.0 357.0,255.0 360.0,257.0 359.0,273.0 353.0,275.0 332.0,275.0 324.0,272.0 324.0,257.0 328.0,255.0 324.0,252.0 333.0,251.0 334.0,243.0 359.0,239.0"/>
+  <polygon class="part" id="terminal_30" data-area="806" points="351.0,363.0 354.0,363.0 354.0,395.0 348.0,396.0 322.0,380.0 322.0,369.0 351.0,363.0"/>
+  <polygon class="part" id="terminal_85" data-area="1223" points="226.0,354.0 250.0,370.0 250.0,415.0 245.0,416.0 227.0,402.0 226.0,354.0"/>
+  <polygon class="part" id="terminal_86" data-area="2495" points="421.0,349.0 419.0,435.0 413.0,436.0 389.0,421.0 390.0,356.0 421.0,349.0"/>
+  <polygon class="part" id="terminal_87" data-area="3085" points="316.0,370.0 317.0,464.0 310.0,465.0 281.0,443.0 281.0,377.0 316.0,370.0"/>
+</svg>

@@ -1,0 +1,348 @@
+{
+  "asset_id": "relay_4pin",
+  "view": "cutaway",
+  "frames": [
+    {
+      "index": 0,
+      "azimuth_deg": 0.0,
+      "jpg": "relay_4pin_cutaway_00.jpg",
+      "svg": "relay_4pin_cutaway_00.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 1,
+      "azimuth_deg": 15.0,
+      "jpg": "relay_4pin_cutaway_01.jpg",
+      "svg": "relay_4pin_cutaway_01.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 2,
+      "azimuth_deg": 30.0,
+      "jpg": "relay_4pin_cutaway_02.jpg",
+      "svg": "relay_4pin_cutaway_02.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 3,
+      "azimuth_deg": 45.0,
+      "jpg": "relay_4pin_cutaway_03.jpg",
+      "svg": "relay_4pin_cutaway_03.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 4,
+      "azimuth_deg": 60.0,
+      "jpg": "relay_4pin_cutaway_04.jpg",
+      "svg": "relay_4pin_cutaway_04.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 5,
+      "azimuth_deg": 75.0,
+      "jpg": "relay_4pin_cutaway_05.jpg",
+      "svg": "relay_4pin_cutaway_05.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 6,
+      "azimuth_deg": 90.0,
+      "jpg": "relay_4pin_cutaway_06.jpg",
+      "svg": "relay_4pin_cutaway_06.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 7,
+      "azimuth_deg": 105.0,
+      "jpg": "relay_4pin_cutaway_07.jpg",
+      "svg": "relay_4pin_cutaway_07.svg",
+      "parts": [
+        "armature",
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 8,
+      "azimuth_deg": 120.0,
+      "jpg": "relay_4pin_cutaway_08.jpg",
+      "svg": "relay_4pin_cutaway_08.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 9,
+      "azimuth_deg": 135.0,
+      "jpg": "relay_4pin_cutaway_09.jpg",
+      "svg": "relay_4pin_cutaway_09.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 10,
+      "azimuth_deg": 150.0,
+      "jpg": "relay_4pin_cutaway_10.jpg",
+      "svg": "relay_4pin_cutaway_10.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 11,
+      "azimuth_deg": 165.0,
+      "jpg": "relay_4pin_cutaway_11.jpg",
+      "svg": "relay_4pin_cutaway_11.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 12,
+      "azimuth_deg": 180.0,
+      "jpg": "relay_4pin_cutaway_12.jpg",
+      "svg": "relay_4pin_cutaway_12.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 13,
+      "azimuth_deg": 195.0,
+      "jpg": "relay_4pin_cutaway_13.jpg",
+      "svg": "relay_4pin_cutaway_13.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 14,
+      "azimuth_deg": 210.0,
+      "jpg": "relay_4pin_cutaway_14.jpg",
+      "svg": "relay_4pin_cutaway_14.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 15,
+      "azimuth_deg": 225.0,
+      "jpg": "relay_4pin_cutaway_15.jpg",
+      "svg": "relay_4pin_cutaway_15.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86"
+      ]
+    },
+    {
+      "index": 16,
+      "azimuth_deg": 240.0,
+      "jpg": "relay_4pin_cutaway_16.jpg",
+      "svg": "relay_4pin_cutaway_16.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 17,
+      "azimuth_deg": 255.0,
+      "jpg": "relay_4pin_cutaway_17.jpg",
+      "svg": "relay_4pin_cutaway_17.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 18,
+      "azimuth_deg": 270.0,
+      "jpg": "relay_4pin_cutaway_18.jpg",
+      "svg": "relay_4pin_cutaway_18.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 19,
+      "azimuth_deg": 285.0,
+      "jpg": "relay_4pin_cutaway_19.jpg",
+      "svg": "relay_4pin_cutaway_19.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 20,
+      "azimuth_deg": 300.0,
+      "jpg": "relay_4pin_cutaway_20.jpg",
+      "svg": "relay_4pin_cutaway_20.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 21,
+      "azimuth_deg": 315.0,
+      "jpg": "relay_4pin_cutaway_21.jpg",
+      "svg": "relay_4pin_cutaway_21.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 22,
+      "azimuth_deg": 330.0,
+      "jpg": "relay_4pin_cutaway_22.jpg",
+      "svg": "relay_4pin_cutaway_22.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    {
+      "index": 23,
+      "azimuth_deg": 345.0,
+      "jpg": "relay_4pin_cutaway_23.jpg",
+      "svg": "relay_4pin_cutaway_23.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    }
+  ],
+  "frame_count": 24,
+  "elevation_deg": 14.0,
+  "azimuth_step_deg": 15.0,
+  "width": 640,
+  "height": 512
+}

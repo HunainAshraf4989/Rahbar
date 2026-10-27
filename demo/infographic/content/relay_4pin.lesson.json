@@ -1,0 +1,165 @@
+{
+  "asset_id": "relay_4pin",
+  "curriculum_node": "AE/devices/relay",
+  "tevta_topic": "Relays, solenoid, printed circuits, circuit breaker, fuse, types of bulb, terminals and switches",
+  "safety_critical": true,
+  "provenance": {
+    "authored_by": "VoiceStudio team (draft)",
+    "authored_on": "2026-08-14",
+    "reviewed_by": null,
+    "reviewed_on": null,
+    "status": "DRAFT — NOT trade-reviewed. PROV-4 sign-off outstanding.",
+    "source_basis": "ISO 7588-1 mini-relay terminal numbering; TEVTA Auto Electrician 3-month curriculum, topic 'Head lamp circuit with relay'"
+  },
+  "overview": {
+    "en": "A relay is a remote-controlled switch. A small current through a coil makes an electromagnet, the electromagnet pulls an armature across, and the armature closes a pair of heavy contacts that carry the large current to the load.",
+    "ur": "ریلے ایک ایسا switch ہے جو دور سے control ہوتا ہے۔ تھوڑا سا current ایک coil میں سے گزرتا ہے، coil سے magnet بنتا ہے، magnet آرمیچر کو کھینچتا ہے، اور آرمیچر وہ بڑے کانٹیکٹس بند کر دیتا ہے جو load تک بھاری current لے جاتے ہیں۔"
+  },
+  "why_it_matters": {
+    "en": "The switch on the dashboard cannot carry headlamp current. The relay lets a thin wire and a small switch control a thick wire and a big load.",
+    "ur": "ڈیش بورڈ والا switch ہیڈ لائٹ کا پورا current نہیں اٹھا سکتا۔ ریلے کی وجہ سے ایک باریک تار اور چھوٹا switch، ایک موٹی تار اور بڑے لوڈ کو control کر لیتا ہے۔"
+  },
+  "part_notes": {
+    "case": {
+      "en": "The sealed plastic housing. Terminal numbers and the internal circuit diagram are moulded or printed on it.",
+      "ur": "پلاسٹک کا بند خول۔ ٹرمینل نمبر اور اندر کا circuit diagram اسی کے اوپر لکھا ہوتا ہے۔"
+    },
+    "terminal_86": {
+      "en": "Coil terminal. One end of the control coil. In the common wiring convention this is the switched positive feed from the control switch.",
+      "ur": "کوائل کا ایک سرا۔ عام wiring میں اسی پر control switch سے positive آتا ہے۔"
+    },
+    "terminal_85": {
+      "en": "Coil terminal. The other end of the control coil, usually taken to earth.",
+      "ur": "کوائل کا دوسرا سرا۔ عام طور پر یہ earth یعنی زمین پر جاتا ہے۔"
+    },
+    "terminal_30": {
+      "en": "Common terminal. The heavy battery feed comes in here, protected by its own fuse.",
+      "ur": "یہاں بیٹری کی موٹی سپلائی آتی ہے، اور اس پر اپنا الگ fuse لگا ہوتا ہے۔"
+    },
+    "terminal_87": {
+      "en": "Normally-open output. When the coil is energised the contacts close and supply passes from the common terminal to here, and on to the load.",
+      "ur": "یہ output ہے۔ جب coil کو current ملتا ہے تو کانٹیکٹس بند ہوتے ہیں اور سپلائی یہاں سے آگے لوڈ تک چلی جاتی ہے۔"
+    },
+    "coil": {
+      "en": "Fine copper wire wound on an iron core. Energising it makes an electromagnet. It draws a small current, typically well under one amp.",
+      "ur": "لوہے کے گرد باریک تانبے کی تار لپٹی ہوتی ہے۔ اس میں current آتے ہی magnet بن جاتا ہے۔ یہ بہت تھوڑا current لیتی ہے۔"
+    },
+    "armature": {
+      "en": "The moving iron lever. The electromagnet pulls it down; a return spring pushes it back when the coil is de-energised.",
+      "ur": "لوہے کا ہلنے والا لیور۔ magnet اسے کھینچتا ہے، اور جب current بند ہو تو spring اسے واپس دھکیل دیتی ہے۔"
+    },
+    "contacts": {
+      "en": "The heavy switch contacts. They carry the load current, so they are the part that burns and pits with age.",
+      "ur": "یہ بھاری کانٹیکٹس ہیں۔ لوڈ کا سارا current انہی سے گزرتا ہے، اس لیے وقت کے ساتھ یہی جلتے اور خراب ہوتے ہیں۔"
+    }
+  },
+  "procedures": [
+    {
+      "procedure_id": "connect_relay",
+      "title_en": "Connecting a 4-pin relay into a lamp circuit",
+      "title_ur": "چار پن والا ریلے لیمپ کے سرکٹ میں لگانا",
+      "safety_critical": true,
+      "steps": [
+        {
+          "n": 1,
+          "part": "case",
+          "en": "Disconnect the battery negative terminal before you touch any wiring.",
+          "ur": "کوئی بھی تار چھونے سے پہلے بیٹری کا منفی ٹرمینل اتار دیں۔",
+          "is_safety_step": true
+        },
+        {
+          "n": 2,
+          "part": "case",
+          "en": "Read the terminal numbers and the diagram moulded on the relay body. Confirm it is a four-pin, normally-open relay and note its rated current.",
+          "ur": "ریلے کے اوپر لکھے ہوئے ٹرمینل نمبر اور diagram پڑھیں۔ تصدیق کریں کہ یہ چار پن والا normally open ریلے ہے۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 3,
+          "part": "terminal_30",
+          "en": "Run a fused feed from the battery positive to the common terminal. The fuse goes as close to the battery as practical.",
+          "ur": "بیٹری کے مثبت سرے سے fuse والی تار کامن ٹرمینل تک لے جائیں۔ fuse بیٹری کے جتنا قریب ہو سکے، اتنا بہتر ہے۔",
+          "is_safety_step": true
+        },
+        {
+          "n": 4,
+          "part": "terminal_87",
+          "en": "Connect the output terminal to the lamp's supply wire.",
+          "ur": "output والا ٹرمینل لیمپ کی سپلائی تار سے جوڑ دیں۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 5,
+          "part": "terminal_86",
+          "en": "Connect the switched feed from the dashboard switch to the first coil terminal.",
+          "ur": "ڈیش بورڈ کے switch سے آنے والی تار کوائل کے پہلے ٹرمینل پر لگائیں۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 6,
+          "part": "terminal_85",
+          "en": "Earth the second coil terminal to a clean, paint-free point on the body.",
+          "ur": "کوائل کا دوسرا ٹرمینل گاڑی کی باڈی پر صاف جگہ سے earth کر دیں جہاں پینٹ نہ ہو۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 7,
+          "part": "case",
+          "en": "Reconnect the battery, then operate the switch. A healthy relay gives an audible click and the lamp lights.",
+          "ur": "بیٹری دوبارہ لگائیں اور switch چلائیں۔ صحیح ریلے سے کلک کی آواز آتی ہے اور لیمپ جل جاتا ہے۔",
+          "is_safety_step": false
+        }
+      ]
+    },
+    {
+      "procedure_id": "test_relay",
+      "title_en": "Testing a suspect relay",
+      "title_ur": "خراب ریلے کو چیک کرنا",
+      "safety_critical": false,
+      "steps": [
+        {
+          "n": 1,
+          "part": "case",
+          "en": "Pull the relay out of its socket and identify the coil pair and the switched pair from the diagram on the body.",
+          "ur": "ریلے کو socket سے نکالیں اور اس کے اوپر بنے diagram سے کوائل والے اور switch والے ٹرمینل پہچانیں۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 2,
+          "part": "coil",
+          "en": "Measure resistance across the two coil terminals. An open circuit means a burnt-out coil.",
+          "ur": "دونوں کوائل ٹرمینلز کے درمیان مزاحمت ناپیں۔ اگر circuit کھلا ہو تو کوائل جل چکی ہے۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 3,
+          "part": "contacts",
+          "en": "Measure across the common and output terminals with the coil unpowered. A normally-open relay must read open here.",
+          "ur": "کوائل کو بغیر current دیے کامن اور output ٹرمینل کے درمیان ناپیں۔ normally open ریلے میں یہاں circuit کھلا ہونا چاہیے۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 4,
+          "part": "contacts",
+          "en": "Apply battery voltage across the coil terminals. The relay should click and the common-to-output path should now read closed.",
+          "ur": "کوائل کے ٹرمینلز پر بیٹری کی وولٹیج لگائیں۔ ریلے کلک کرے گا اور کامن سے output کا راستہ اب بند پڑھنا چاہیے۔",
+          "is_safety_step": false
+        }
+      ]
+    }
+  ],
+  "common_faults": [
+    {
+      "en": "Coil open circuit — no click, lamp never lights.",
+      "ur": "کوائل ٹوٹ گئی ہو تو کلک کی آواز نہیں آتی اور لیمپ نہیں جلتا۔"
+    },
+    {
+      "en": "Pitted contacts — relay clicks but the lamp is dim or intermittent because the contacts drop voltage.",
+      "ur": "کانٹیکٹس جل جائیں تو کلک تو ہوتی ہے مگر لیمپ مدھم یا کبھی کبھار جلتا ہے۔"
+    },
+    {
+      "en": "Bad earth on the coil terminal — behaves exactly like a dead relay.",
+      "ur": "کوائل والے ٹرمینل کی earth خراب ہو تو ریلے بالکل مردہ لگتا ہے۔"
+    }
+  ]
+}

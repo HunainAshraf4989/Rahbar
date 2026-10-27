@@ -1,0 +1,38 @@
+{
+  "generated_by": "asset_gen/generate_assets.py",
+  "assets": [
+    {
+      "asset_id": "relay_4pin",
+      "curriculum_node": "AE/devices/relay",
+      "parts": 8,
+      "internal_parts": 3,
+      "files": [
+        "relay_4pin.svg",
+        "relay_4pin.parts.json",
+        "relay_4pin.png"
+      ]
+    },
+    {
+      "asset_id": "relay_5pin",
+      "curriculum_node": "AE/devices/relay",
+      "parts": 9,
+      "internal_parts": 3,
+      "files": [
+        "relay_5pin.svg",
+        "relay_5pin.parts.json",
+        "relay_5pin.png"
+      ]
+    },
+    {
+      "asset_id": "fuse_blade_std",
+      "curriculum_node": "AE/devices/fuse",
+      "parts": 4,
+      "internal_parts": 1,
+      "files": [
+        "fuse_blade_std.svg",
+        "fuse_blade_std.parts.json",
+        "fuse_blade_std.png"
+      ]
+    }
+  ]
+}

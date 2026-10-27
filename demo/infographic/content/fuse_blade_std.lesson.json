@@ -1,0 +1,95 @@
+{
+  "asset_id": "fuse_blade_std",
+  "curriculum_node": "AE/devices/fuse",
+  "tevta_topic": "Relays, solenoid, printed circuits, circuit breaker, fuse, types of bulb, terminals and switches",
+  "safety_critical": true,
+  "provenance": {
+    "authored_by": "VoiceStudio team (draft)",
+    "authored_on": "2026-08-14",
+    "reviewed_by": null,
+    "reviewed_on": null,
+    "status": "DRAFT — NOT trade-reviewed. PROV-4 sign-off outstanding.",
+    "source_basis": "ATO/ATC blade-fuse colour code (SAE J1284); TEVTA Auto Electrician 3-month curriculum"
+  },
+  "overview": {
+    "en": "A blade fuse is a deliberate weak point in the circuit. Its element is sized to melt before the wiring behind it overheats, so the fuse protects the harness, not the device on the end of it.",
+    "ur": "بلیڈ فیوز سرکٹ میں جان بوجھ کر رکھی گئی کمزور کڑی ہے۔ اس کی تار اتنی باریک ہوتی ہے کہ وائرنگ گرم ہونے سے پہلے ہی پگھل جائے۔ یاد رکھیں، فیوز وائرنگ کو بچاتا ہے، آلے کو نہیں۔"
+  },
+  "why_it_matters": {
+    "en": "Fitting a higher-rated fuse to stop it blowing removes the protection and lets the harness become the fuse.",
+    "ur": "اگر فیوز بار بار اڑتا ہے اور آپ زیادہ ریٹنگ والا فیوز لگا دیں تو تحفظ ختم ہو جاتا ہے، اور پھر وائرنگ خود فیوز کا کام کرنے لگتی ہے۔"
+  },
+  "part_notes": {
+    "body": {
+      "en": "Colour-coded transparent housing. The colour and the moulded number give the current rating, and the element is visible through the plastic.",
+      "ur": "رنگ سے پہچانا جانے والا شفاف خول۔ رنگ اور اوپر لکھا نمبر بتاتے ہیں کہ فیوز کتنے ایمپیئر کا ہے، اور اندر کی تار پلاسٹک میں سے نظر آتی ہے۔"
+    },
+    "blade_L": {
+      "en": "One of the two flat contact blades that push into the fuse box socket.",
+      "ur": "دو چپٹے بلیڈوں میں سے ایک، جو فیوز باکس کے سوکٹ میں گھستا ہے۔"
+    },
+    "blade_R": {
+      "en": "The other contact blade. The fuse is not polarity sensitive; either blade can be the supply side.",
+      "ur": "دوسرا بلیڈ۔ فیوز میں مثبت منفی کا فرق نہیں ہوتا، کوئی بھی طرف سپلائی کی ہو سکتی ہے۔"
+    },
+    "element": {
+      "en": "The zinc alloy strip between the blades. It melts when current exceeds the rating for long enough. A blown fuse shows a visible break in this strip.",
+      "ur": "دونوں بلیڈوں کے درمیان دھات کی پتلی پٹی۔ جب current ریٹنگ سے زیادہ دیر تک بڑھ جائے تو یہ پگھل جاتی ہے۔ اڑا ہوا فیوز دیکھنے سے ہی ٹوٹا نظر آتا ہے۔"
+    }
+  },
+  "procedures": [
+    {
+      "procedure_id": "check_replace_fuse",
+      "title_en": "Checking and replacing a blade fuse",
+      "title_ur": "بلیڈ فیوز چیک کرنا اور بدلنا",
+      "safety_critical": true,
+      "steps": [
+        {
+          "n": 1,
+          "part": "body",
+          "en": "Switch the circuit off before pulling the fuse.",
+          "ur": "فیوز نکالنے سے پہلے سرکٹ بند کر دیں۔",
+          "is_safety_step": true
+        },
+        {
+          "n": 2,
+          "part": "body",
+          "en": "Pull the fuse straight out with the puller, never with pliers on the body.",
+          "ur": "فیوز کو سیدھا پلر سے کھینچیں، پلاس سے کبھی نہ پکڑیں۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 3,
+          "part": "element",
+          "en": "Hold it to the light and look at the element. A clean unbroken strip means the fuse is good.",
+          "ur": "روشنی کے سامنے رکھ کر اندر کی تار دیکھیں۔ اگر پٹی سالم ہو تو فیوز ٹھیک ہے۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 4,
+          "part": "body",
+          "en": "Replace only with the same rating and the same colour. Never fit a higher rating to stop it blowing again.",
+          "ur": "نیا فیوز بالکل اسی ریٹنگ اور اسی رنگ کا لگائیں۔ بار بار اڑنے سے بچانے کے لیے زیادہ ریٹنگ والا فیوز کبھی نہ لگائیں۔",
+          "is_safety_step": true
+        },
+        {
+          "n": 5,
+          "part": "body",
+          "en": "If the new fuse blows immediately, stop and find the short circuit. The fuse is reporting a fault, not causing one.",
+          "ur": "اگر نیا فیوز فوراً اڑ جائے تو رک جائیں اور شارٹ سرکٹ تلاش کریں۔ فیوز خرابی بتا رہا ہے، پیدا نہیں کر رہا۔",
+          "is_safety_step": true
+        }
+      ]
+    }
+  ],
+  "common_faults": [
+    {
+      "en": "Repeatedly blowing fuse — a short to earth somewhere in the harness, not a weak fuse.",
+      "ur": "فیوز بار بار اڑے تو کہیں تار زمین سے شارٹ ہو رہی ہے، فیوز کمزور نہیں ہے۔"
+    },
+    {
+      "en": "Corroded or loose blades — intermittent operation and heat at the fuse box.",
+      "ur": "بلیڈ زنگ آلود یا ڈھیلے ہوں تو سرکٹ کبھی چلتا کبھی نہیں، اور فیوز باکس گرم ہو جاتا ہے۔"
+    }
+  ]
+}

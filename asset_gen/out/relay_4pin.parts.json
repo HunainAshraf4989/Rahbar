@@ -1,0 +1,104 @@
+{
+  "asset_id": "relay_4pin",
+  "curriculum_node": "AE/devices/relay",
+  "title_en": "4-pin ISO mini relay",
+  "title_ur": "چار پن والا ریلے",
+  "viewbox": [
+    0,
+    0,
+    640,
+    512
+  ],
+  "generated_by": "asset_gen/generate_assets.py",
+  "provenance": {
+    "method": "parametric — geometry computed from a written spec",
+    "image_model_used": false,
+    "spec_source": "component datasheet / ISO 7588 terminal numbering",
+    "reviewed_by": null,
+    "reviewed_on": null
+  },
+  "part_vocabulary": [
+    "case",
+    "terminal_86",
+    "terminal_85",
+    "terminal_30",
+    "terminal_87",
+    "coil",
+    "armature",
+    "contacts"
+  ],
+  "parts": [
+    {
+      "id": "case",
+      "written": "",
+      "spoken_ur": "",
+      "label_en": "Case",
+      "label_ur": "",
+      "note_en": "",
+      "visible_in_photo": true
+    },
+    {
+      "id": "terminal_86",
+      "written": "86",
+      "spoken_ur": "چھیاسی",
+      "label_en": "Coil terminal",
+      "label_ur": "کوائل کا ایک سرا",
+      "note_en": "One end of the coil",
+      "visible_in_photo": true
+    },
+    {
+      "id": "terminal_85",
+      "written": "85",
+      "spoken_ur": "پچاسی",
+      "label_en": "Coil terminal",
+      "label_ur": "کوائل کا دوسرا سرا",
+      "note_en": "Other end of the coil; usually earthed",
+      "visible_in_photo": true
+    },
+    {
+      "id": "terminal_30",
+      "written": "30",
+      "spoken_ur": "تیس",
+      "label_en": "Common / battery feed",
+      "label_ur": "بیٹری کی سپلائی",
+      "note_en": "Battery supply in",
+      "visible_in_photo": true
+    },
+    {
+      "id": "terminal_87",
+      "written": "87",
+      "spoken_ur": "ستاسی",
+      "label_en": "Normally-open output",
+      "label_ur": "لوڈ کی طرف",
+      "note_en": "Supply out to the load when energised",
+      "visible_in_photo": true
+    },
+    {
+      "id": "coil",
+      "written": "",
+      "spoken_ur": "کوائل",
+      "label_en": "Copper coil",
+      "label_ur": "تانبے کی کوائل",
+      "note_en": "Energising this makes an electromagnet",
+      "visible_in_photo": false
+    },
+    {
+      "id": "armature",
+      "written": "",
+      "spoken_ur": "آرمیچر",
+      "label_en": "Armature",
+      "label_ur": "آرمیچر",
+      "note_en": "The magnet pulls this across",
+      "visible_in_photo": false
+    },
+    {
+      "id": "contacts",
+      "written": "",
+      "spoken_ur": "کانٹیکٹس",
+      "label_en": "Switch contacts",
+      "label_ur": "کانٹیکٹس",
+      "note_en": "Close to pass the large current",
+      "visible_in_photo": false
+    }
+  ]
+}

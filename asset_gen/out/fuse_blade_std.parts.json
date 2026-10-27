@@ -1,0 +1,64 @@
+{
+  "asset_id": "fuse_blade_std",
+  "curriculum_node": "AE/devices/fuse",
+  "title_en": "Standard (ATO) blade fuse",
+  "title_ur": "بلیڈ فیوز",
+  "viewbox": [
+    0,
+    0,
+    640,
+    512
+  ],
+  "generated_by": "asset_gen/generate_assets.py",
+  "provenance": {
+    "method": "parametric — geometry computed from a written spec",
+    "image_model_used": false,
+    "spec_source": "component datasheet / ISO 7588 terminal numbering",
+    "reviewed_by": null,
+    "reviewed_on": null
+  },
+  "part_vocabulary": [
+    "body",
+    "blade_L",
+    "blade_R",
+    "element"
+  ],
+  "parts": [
+    {
+      "id": "body",
+      "written": "",
+      "spoken_ur": "فیوز",
+      "label_en": "Fuse body",
+      "label_ur": "فیوز کا جسم",
+      "note_en": "Colour tells you the rating",
+      "visible_in_photo": true
+    },
+    {
+      "id": "blade_L",
+      "written": "L",
+      "spoken_ur": "بایاں بلیڈ",
+      "label_en": "Left blade",
+      "label_ur": "بایاں بلیڈ",
+      "note_en": "Push-fit contact into the fuse box",
+      "visible_in_photo": true
+    },
+    {
+      "id": "blade_R",
+      "written": "R",
+      "spoken_ur": "دایاں بلیڈ",
+      "label_en": "Right blade",
+      "label_ur": "دایاں بلیڈ",
+      "note_en": "Push-fit contact into the fuse box",
+      "visible_in_photo": true
+    },
+    {
+      "id": "element",
+      "written": "",
+      "spoken_ur": "فیوز کی تار",
+      "label_en": "Fusible element",
+      "label_ur": "پگھلنے والی تار",
+      "note_en": "Melts and breaks the circuit on overload",
+      "visible_in_photo": false
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"
+     data-asset="relay_4pin" data-curriculum-node="AE/devices/relay"
+     data-view="cutaway@330">
+  <title>4-pin ISO mini relay (Type B)</title>
+  <desc>Contour-traced from the render ID buffer by asset_gen/render3d.py.
+        Geometry is pixel-exact against the PNG of the same view by construction.</desc>
+  <polygon class="part" id="armature" data-area="8338" points="352.0,88.0 393.0,93.0 391.0,235.0 374.0,237.0 367.0,234.0 367.0,228.0 364.0,225.0 352.0,221.0 347.0,223.0 347.0,227.0 342.0,225.0 342.0,116.0 329.0,116.0 328.0,107.0 282.0,110.0 282.0,97.0 287.0,97.0 289.0,92.0 352.0,88.0"/>
+  <polygon class="part" id="case" data-area="69404" points="336.0,50.0 368.0,50.0 500.0,62.0 499.0,78.0 424.0,81.0 422.0,83.0 418.0,237.0 418.0,271.0 498.0,302.0 497.0,333.0 265.0,379.0 157.0,306.0 156.0,277.0 162.0,275.0 162.0,263.0 154.0,56.0 336.0,50.0"/>
+  <polygon class="part" id="coil" data-area="6739" points="327.0,108.0 328.0,119.0 318.0,123.0 318.0,255.0 327.0,260.0 328.0,274.0 324.0,279.0 314.0,283.0 284.0,287.0 282.0,111.0 327.0,108.0"/>
+  <polygon class="part" id="contacts" data-area="928" points="349.0,222.0 365.0,227.0 366.0,235.0 374.0,238.0 380.0,238.0 379.0,239.0 383.0,241.0 383.0,252.0 381.0,256.0 363.0,258.0 354.0,257.0 348.0,254.0 349.0,240.0 352.0,239.0 349.0,237.0 349.0,222.0"/>
+  <polygon class="part" id="terminal_30" data-area="2858" points="208.0,342.0 263.0,379.0 263.0,406.0 213.0,417.0 210.0,415.0 208.0,342.0"/>
+  <polygon class="part" id="terminal_85" data-area="3646" points="311.0,371.0 314.0,371.0 314.0,449.0 273.0,459.0 270.0,457.0 269.0,380.0 311.0,371.0"/>
+  <polygon class="part" id="terminal_86" data-area="948" points="361.0,361.0 362.0,385.0 331.0,392.0 325.0,391.0 326.0,368.0 361.0,361.0"/>
+  <polygon class="part" id="terminal_87" data-area="3968" points="431.0,347.0 432.0,381.0 430.0,421.0 385.0,432.0 380.0,431.0 380.0,358.0 431.0,347.0"/>
+</svg>

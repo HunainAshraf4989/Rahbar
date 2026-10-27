@@ -1,0 +1,97 @@
+{
+  "asset_id": "relay_5pin",
+  "curriculum_node": "AE/devices/relay",
+  "tevta_topic": "Relays, solenoid, printed circuits, circuit breaker, fuse, types of bulb, terminals and switches",
+  "safety_critical": true,
+  "provenance": {
+    "authored_by": "VoiceStudio team (draft)",
+    "authored_on": "2026-08-14",
+    "reviewed_by": null,
+    "reviewed_on": null,
+    "status": "DRAFT — NOT trade-reviewed. PROV-4 sign-off outstanding.",
+    "source_basis": "ISO 7588-1 mini-relay terminal numbering; TEVTA Auto Electrician 3-month curriculum"
+  },
+  "overview": {
+    "en": "A five-pin relay is a changeover switch. It has the same coil as the four-pin type, but the armature selects between two outputs: one that is connected when the coil is off, and one that is connected when the coil is on.",
+    "ur": "پانچ پن والا ریلے changeover switch ہے۔ اس کی کوائل چار پن والے جیسی ہی ہے، مگر آرمیچر دو output میں سے ایک چنتا ہے۔ ایک وہ جو کوائل بند ہونے پر جڑا رہتا ہے، اور دوسرا وہ جو کوائل چلنے پر جڑتا ہے۔"
+  },
+  "why_it_matters": {
+    "en": "Anywhere current must move from one path to another rather than simply switch on — dipped to main beam, for instance — needs the changeover type.",
+    "ur": "جہاں current کو صرف چالو نہیں کرنا بلکہ ایک راستے سے دوسرے پر بھیجنا ہو، جیسے چھوٹی لائٹ سے بڑی لائٹ پر، وہاں یہی changeover والا ریلے لگتا ہے۔"
+  },
+  "part_notes": {
+    "case": {
+      "en": "The sealed housing, with the changeover circuit diagram moulded on it. That diagram is how you tell a five-pin apart from a four-pin at a glance.",
+      "ur": "بند خول، جس پر changeover کا diagram بنا ہوتا ہے۔ اسی diagram سے فوراً پتہ چل جاتا ہے کہ یہ پانچ پن والا ہے یا چار پن والا۔"
+    },
+    "terminal_86": {
+      "en": "Coil terminal, switched feed side.",
+      "ur": "کوائل کا ٹرمینل، جس پر switch سے سپلائی آتی ہے۔"
+    },
+    "terminal_85": {
+      "en": "Coil terminal, earth side.",
+      "ur": "کوائل کا ٹرمینل، جو earth کی طرف جاتا ہے۔"
+    },
+    "terminal_30": {
+      "en": "Common terminal. The battery feed arrives here and is sent to one of the two outputs.",
+      "ur": "کامن ٹرمینل۔ بیٹری کی سپلائی یہاں آتی ہے اور دو output میں سے ایک کی طرف جاتی ہے۔"
+    },
+    "terminal_87a": {
+      "en": "Normally-closed output. It is connected to the common terminal while the coil is at rest, and disconnects the moment the relay energises.",
+      "ur": "یہ normally closed output ہے۔ جب تک کوائل بند ہے یہ کامن ٹرمینل سے جڑا رہتا ہے، اور ریلے چلتے ہی الگ ہو جاتا ہے۔"
+    },
+    "terminal_87": {
+      "en": "Normally-open output. It connects to the common terminal only while the coil is energised.",
+      "ur": "یہ normally open output ہے۔ صرف اسی وقت کامن ٹرمینل سے جڑتا ہے جب کوائل کو current مل رہا ہو۔"
+    },
+    "coil": {
+      "en": "The control coil, electrically identical in function to the four-pin relay's coil.",
+      "ur": "control کرنے والی کوائل، جو کام میں چار پن والے ریلے کی کوائل جیسی ہی ہے۔"
+    },
+    "armature": {
+      "en": "The moving lever. Here it does not just close a contact, it swings between two of them.",
+      "ur": "ہلنے والا لیور۔ یہاں یہ صرف ایک کانٹیکٹ بند نہیں کرتا بلکہ دو کے درمیان جھولتا ہے۔"
+    },
+    "contacts": {
+      "en": "Three contact points rather than two: the common one, plus the normally-closed and normally-open outputs.",
+      "ur": "یہاں دو نہیں، تین کانٹیکٹ ہوتے ہیں۔ ایک کامن، اور دو output والے۔"
+    }
+  },
+  "procedures": [
+    {
+      "procedure_id": "identify_changeover",
+      "title_en": "Telling a changeover relay from a make-only relay",
+      "title_ur": "changeover ریلے کو عام ریلے سے پہچاننا",
+      "safety_critical": false,
+      "steps": [
+        {
+          "n": 1,
+          "part": "case",
+          "en": "Count the pins and read the diagram on the body. Five pins with two outputs means changeover.",
+          "ur": "پن گنیں اور خول پر بنا diagram پڑھیں۔ پانچ پن اور دو output کا مطلب changeover ہے۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 2,
+          "part": "terminal_87a",
+          "en": "With the coil at rest, measure between the common terminal and the normally-closed output. It should read closed.",
+          "ur": "کوائل بند ہو تو کامن ٹرمینل اور normally closed output کے درمیان ناپیں۔ یہ بند پڑھنا چاہیے۔",
+          "is_safety_step": false
+        },
+        {
+          "n": 3,
+          "part": "terminal_87",
+          "en": "Energise the coil. The normally-closed path must open and the normally-open path must close.",
+          "ur": "کوائل کو current دیں۔ normally closed راستہ کھلنا چاہیے اور normally open راستہ بند ہونا چاہیے۔",
+          "is_safety_step": false
+        }
+      ]
+    }
+  ],
+  "common_faults": [
+    {
+      "en": "Fitting a four-pin relay into a five-pin socket — the normally-closed circuit simply stops working and the fault looks like a wiring break.",
+      "ur": "پانچ پن والی جگہ پر چار پن والا ریلے لگا دیا جائے تو normally closed سرکٹ کام چھوڑ دیتا ہے، اور خرابی وائرنگ ٹوٹنے جیسی لگتی ہے۔"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"
+     data-asset="relay_4pin" data-curriculum-node="AE/devices/relay"
+     data-view="exterior">
+  <title>4-pin ISO mini relay (Type B)</title>
+  <desc>Contour-traced from the render ID buffer by asset_gen/render3d.py.
+        Geometry is pixel-exact against the PNG of the same view by construction.</desc>
+  <polygon class="part" id="case" data-area="406534" points="280.5,49.5 487.0,56.5 479.0,263.0 479.0,276.5 485.5,278.0 484.0,307.0 370.5,380.0 142.0,332.5 140.5,301.0 147.0,299.0 148.5,297.0 138.5,62.0 280.5,49.5"/>
+  <polygon class="part" id="terminal_30" data-area="4261" points="273.5,360.5 316.5,369.5 316.5,393.5 274.0,384.5 273.5,360.5"/>
+  <polygon class="part" id="terminal_85" data-area="12269" points="212.0,347.5 253.0,356.0 254.0,429.0 250.5,431.0 214.0,422.0 212.0,347.5"/>
+  <polygon class="part" id="terminal_86" data-area="9148" points="425.5,345.0 423.5,414.5 421.5,416.5 418.5,416.5 382.5,408.5 383.0,372.5 425.5,345.0"/>
+  <polygon class="part" id="terminal_87" data-area="18651" points="317.5,369.5 369.0,380.5 370.5,380.5 376.0,377.0 375.0,457.5 374.5,459.0 372.0,461.0 369.5,461.0 317.5,448.0 317.5,369.5"/>
+</svg>

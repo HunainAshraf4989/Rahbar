@@ -1,0 +1,51 @@
+{
+  "asset_id": "relay_4pin",
+  "generated_by": "asset_gen/render3d.py",
+  "method": "analytic ray-traced solid model; SVG contour-traced from the render ID buffer",
+  "image_model_used": false,
+  "dimensions_mm": {
+    "body": [
+      25.5,
+      25.5,
+      24.0
+    ],
+    "base_plate_h": 3.4,
+    "blade_thickness": 0.8,
+    "blade_coil_w": 4.8,
+    "blade_load_w": 6.3,
+    "blade_len": 11.3
+  },
+  "footprint_type": "B",
+  "sources": [
+    "Picker PC785 ISO 280 relay datasheet (dimensioned drawing)",
+    "DIN 46244 blade terminal sizes (4.8x0.8 coil, 6.3x0.8 load)",
+    "12voltplanet automotive relay guide (Type A/B footprint)"
+  ],
+  "views": {
+    "exterior": {
+      "png": "relay_4pin_exterior.png",
+      "svg": "relay_4pin_exterior.svg",
+      "parts": [
+        "case",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    },
+    "cutaway": {
+      "png": "relay_4pin_cutaway.png",
+      "svg": "relay_4pin_cutaway.svg",
+      "parts": [
+        "armature",
+        "case",
+        "coil",
+        "contacts",
+        "terminal_30",
+        "terminal_85",
+        "terminal_86",
+        "terminal_87"
+      ]
+    }
+  }
+}

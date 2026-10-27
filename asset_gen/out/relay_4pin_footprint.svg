@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"
+     data-asset="relay_4pin" data-view="footprint">
+  <title>4-pin ISO mini relay (Type B) — bottom view footprint</title>
+  <rect class="part" id="terminal_85" x="193.1" y="150.2" width="74.4" height="45.3" rx="3"/>
+  <rect class="part" id="terminal_87" x="362.8" y="150.2" width="93.9" height="45.3" rx="3"/>
+  <rect class="part" id="terminal_30" x="183.4" y="316.6" width="93.9" height="45.3" rx="3"/>
+  <rect class="part" id="terminal_86" x="372.5" y="316.6" width="74.4" height="45.3" rx="3"/>
+</svg>
