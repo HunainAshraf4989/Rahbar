@@ -5,7 +5,7 @@
 !.env.sample
 whatsapp.txt
 
-# Local curriculum corpus (do not push)
+# Local curriculum corpus
 /education_data/
 
 # Python environments and bytecode
