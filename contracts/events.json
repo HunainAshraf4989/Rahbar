@@ -1,0 +1,29 @@
+{
+  "client": {
+    "session.resume": "SessionResumeEvent",
+    "lesson.control": "LessonControlEvent",
+    "speech.start": "SpeechStartEvent",
+    "audio.input": "AudioInputEvent",
+    "speech.end": "SpeechEndEvent",
+    "turn.cancel": "TurnCancelEvent",
+    "question.text": "QuestionTextEvent",
+    "viva.control": "VivaControlEvent",
+    "playback.started": "PlaybackStartedEvent",
+    "playback.ended": "PlaybackEndedEvent",
+    "playback.interrupted": "PlaybackInterruptedEvent"
+  },
+  "server": {
+    "session.state": "SessionStateEvent",
+    "turn.started": "TurnStartedEvent",
+    "transcript.partial": "TranscriptPartialEvent",
+    "transcript.final": "TranscriptFinalEvent",
+    "sentence.approved": "SentenceApprovedEvent",
+    "audio.start": "AudioStartEvent",
+    "audio.chunk": "AudioChunkEvent",
+    "audio.end": "AudioEndEvent",
+    "turn.completed": "TurnCompletedEvent",
+    "viva.state": "VivaStateEvent",
+    "viva.result": "VivaResultEvent",
+    "error": "ErrorEvent"
+  }
+}

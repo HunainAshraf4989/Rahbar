@@ -1,0 +1,122 @@
+[
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "sentence.approved",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 1,
+      "payload": {
+        "sentence_id": "sentence-1",
+        "canonical_text": 42,
+        "evidence_ids": [
+          "passage-1"
+        ],
+        "visual_target": null
+      }
+    },
+    "valid": false,
+    "reason": "numeric_text"
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "sentence.approved",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 1,
+      "payload": {
+        "sentence_id": "sentence-1",
+        "canonical_text": "یہ relay کی coil ہے۔",
+        "evidence_ids": [
+          "passage-1"
+        ],
+        "visual_target": "null"
+      }
+    },
+    "valid": false,
+    "reason": "string_null"
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v2",
+      "type": "sentence.approved",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 1,
+      "payload": {
+        "sentence_id": "sentence-1",
+        "canonical_text": "یہ relay کی coil ہے۔",
+        "evidence_ids": [
+          "passage-1"
+        ],
+        "visual_target": null
+      }
+    },
+    "valid": false,
+    "reason": "unsupported_protocol"
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "sentence.approved",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": null,
+      "sequence": 1,
+      "payload": {
+        "sentence_id": "sentence-1",
+        "canonical_text": "یہ relay کی coil ہے۔",
+        "evidence_ids": [
+          "passage-1"
+        ],
+        "visual_target": null
+      }
+    },
+    "valid": false,
+    "reason": "missing_turn"
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "future.event",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 1,
+      "payload": {
+        "sentence_id": "sentence-1",
+        "canonical_text": "یہ relay کی coil ہے۔",
+        "evidence_ids": [
+          "passage-1"
+        ],
+        "visual_target": null
+      }
+    },
+    "valid": false,
+    "reason": "unknown_event"
+  }
+]

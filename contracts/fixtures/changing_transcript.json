@@ -1,0 +1,40 @@
+[
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "transcript.partial",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 1,
+      "payload": {
+        "canonical_text": "relay",
+        "hypothesis_revision": 1,
+        "final": false
+      }
+    }
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "transcript.final",
+      "event_id": "event-2",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 2,
+      "payload": {
+        "canonical_text": "relay کی coil",
+        "hypothesis_revision": 2,
+        "final": true
+      }
+    }
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "name": "rahbar-contracts",
+  "private": true,
+  "scripts": {
+    "contracts:types": "json2ts -i contracts/contracts.schema.json -o app/web/src/api/contracts.generated.ts --unreachableDefinitions",
+    "test:contracts": "tsx tools/check_contracts.ts && tsc --noEmit"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "json-schema-to-typescript": "^15.0.4",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}

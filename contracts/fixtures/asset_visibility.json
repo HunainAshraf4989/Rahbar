@@ -1,0 +1,44 @@
+[
+  {
+    "model": "AssetManifest",
+    "data": {
+      "asset_id": "relay_4pin",
+      "asset_version": "synthetic-v1",
+      "variant": "Synthetic contract fixture",
+      "sources": [
+        "synthetic; not instructional evidence"
+      ],
+      "review_status": "draft",
+      "parts": [
+        {
+          "part_id": "coil",
+          "label_en": "Coil",
+          "label_ur": "کوائل",
+          "spoken_ur": "کوائل"
+        }
+      ],
+      "views": [
+        {
+          "view_id": "cutaway",
+          "frame_id": "0",
+          "image": "0.png",
+          "overlay": "0.svg",
+          "width": 640,
+          "height": 512,
+          "visible_parts": [
+            "coil"
+          ]
+        },
+        {
+          "view_id": "cutaway",
+          "frame_id": "1",
+          "image": "1.png",
+          "overlay": "1.svg",
+          "width": 640,
+          "height": 512,
+          "visible_parts": []
+        }
+      ]
+    }
+  }
+]
