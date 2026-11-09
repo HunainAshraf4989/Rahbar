@@ -1,0 +1,20 @@
+[
+  {
+    "model": "ChannelJob",
+    "data": {
+      "business_id": "business-1",
+      "sender_id": "sender-1",
+      "message_id": "message-1",
+      "state": "pending"
+    }
+  },
+  {
+    "model": "ChannelJob",
+    "data": {
+      "business_id": "business-1",
+      "sender_id": "sender-1",
+      "message_id": "message-1",
+      "state": "pending"
+    }
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "model": "ProviderFailure",
+    "data": {
+      "code": "timeout",
+      "recoverable": true,
+      "fallback_ready": false,
+      "provider": "synthetic"
+    }
+  },
+  {
+    "model": "ProviderFailure",
+    "data": {
+      "code": "quota_exhausted",
+      "recoverable": true,
+      "fallback_ready": true,
+      "provider": "synthetic"
+    }
+  },
+  {
+    "model": "ProviderFailure",
+    "data": {
+      "code": "quota_exhausted",
+      "recoverable": true,
+      "fallback_ready": false,
+      "provider": "synthetic"
+    }
+  }
+]

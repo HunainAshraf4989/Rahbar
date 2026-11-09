@@ -1,0 +1,6402 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Rahbar contract specification",
+    "version": "1.0.0",
+    "description": "Design contract only; endpoints are not yet implemented."
+  },
+  "paths": {
+    "/health/live": {
+      "get": {
+        "operationId": "get_health_live",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "get_health_ready",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "operationId": "post_api_v1_auth_register",
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "post_api_v1_auth_login",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Credentials"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "post_api_v1_auth_logout",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "get_api_v1_me",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/curriculum": {
+      "get": {
+        "operationId": "get_api_v1_curriculum",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Curriculum"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/units/{unit_id}/lesson": {
+      "get": {
+        "operationId": "get_api_v1_units__unit_id__lesson",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreparedLesson"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "unit_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/units/{unit_id}/quiz": {
+      "get": {
+        "operationId": "get_api_v1_units__unit_id__quiz",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicQuiz"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "unit_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/quiz-attempts": {
+      "post": {
+        "operationId": "post_api_v1_quiz_attempts",
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuizResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuizSubmit"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/progress": {
+      "get": {
+        "operationId": "get_api_v1_progress",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Progress"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/engine/sessions": {
+      "post": {
+        "operationId": "post_api_v1_engine_sessions",
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionCreate"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          },
+          {
+            "hostBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/engine/sessions/{session_id}": {
+      "get": {
+        "operationId": "get_api_v1_engine_sessions__session_id_",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          },
+          {
+            "hostBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/viva-attempts": {
+      "post": {
+        "operationId": "post_api_v1_viva_attempts",
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VivaResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VivaCreate"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          },
+          {
+            "hostBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/viva-attempts/{attempt_id}": {
+      "get": {
+        "operationId": "get_api_v1_viva_attempts__attempt_id_",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VivaResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attempt_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          },
+          {
+            "hostBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/assets/{asset_id}/manifest": {
+      "get": {
+        "operationId": "get_api_v1_assets__asset_id__manifest",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetManifest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/webhooks/whatsapp": {
+      "post": {
+        "operationId": "post_webhooks_whatsapp",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookAccepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpError"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhatsAppWebhook"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "webhookSignature": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "verifyWhatsAppSubscription",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "hub.mode",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "hub.verify_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "hub.challenge",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verified challenge",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Verification failed"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Account": {
+        "additionalProperties": false,
+        "properties": {
+          "account_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Account Id",
+            "type": "string"
+          },
+          "email": {
+            "minLength": 1,
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "account_id",
+          "email"
+        ],
+        "title": "Account",
+        "type": "object"
+      },
+      "VisualTarget": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "asset_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Asset Version",
+            "type": "string"
+          },
+          "view_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "View Id",
+            "type": "string"
+          },
+          "frame_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Frame Id"
+          },
+          "part_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Part Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "asset_version",
+          "view_id",
+          "part_id"
+        ],
+        "title": "VisualTarget",
+        "type": "object"
+      },
+      "ApprovedSentence": {
+        "additionalProperties": false,
+        "properties": {
+          "sentence_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sentence Id",
+            "type": "string"
+          },
+          "canonical_text": {
+            "minLength": 1,
+            "title": "Canonical Text",
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "visual_target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisualTarget"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "sentence_id",
+          "canonical_text",
+          "evidence_ids"
+        ],
+        "title": "ApprovedSentence",
+        "type": "object"
+      },
+      "AssetView": {
+        "additionalProperties": false,
+        "properties": {
+          "view_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "View Id",
+            "type": "string"
+          },
+          "frame_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Frame Id"
+          },
+          "image": {
+            "minLength": 1,
+            "title": "Image",
+            "type": "string"
+          },
+          "overlay": {
+            "minLength": 1,
+            "title": "Overlay",
+            "type": "string"
+          },
+          "width": {
+            "exclusiveMinimum": 0,
+            "title": "Width",
+            "type": "integer"
+          },
+          "height": {
+            "exclusiveMinimum": 0,
+            "title": "Height",
+            "type": "integer"
+          },
+          "visible_parts": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Visible Parts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "view_id",
+          "image",
+          "overlay",
+          "width",
+          "height",
+          "visible_parts"
+        ],
+        "title": "AssetView",
+        "type": "object"
+      },
+      "Part": {
+        "additionalProperties": false,
+        "properties": {
+          "part_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Part Id",
+            "type": "string"
+          },
+          "label_en": {
+            "minLength": 1,
+            "title": "Label En",
+            "type": "string"
+          },
+          "label_ur": {
+            "minLength": 1,
+            "title": "Label Ur",
+            "type": "string"
+          },
+          "spoken_ur": {
+            "minLength": 1,
+            "title": "Spoken Ur",
+            "type": "string"
+          }
+        },
+        "required": [
+          "part_id",
+          "label_en",
+          "label_ur",
+          "spoken_ur"
+        ],
+        "title": "Part",
+        "type": "object"
+      },
+      "AssetManifest": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "asset_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Asset Version",
+            "type": "string"
+          },
+          "variant": {
+            "minLength": 1,
+            "title": "Variant",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Sources",
+            "type": "array"
+          },
+          "review_status": {
+            "enum": [
+              "draft",
+              "reviewed"
+            ],
+            "title": "Review Status",
+            "type": "string"
+          },
+          "parts": {
+            "items": {
+              "$ref": "#/components/schemas/Part"
+            },
+            "minItems": 1,
+            "title": "Parts",
+            "type": "array"
+          },
+          "views": {
+            "items": {
+              "$ref": "#/components/schemas/AssetView"
+            },
+            "minItems": 1,
+            "title": "Views",
+            "type": "array"
+          }
+        },
+        "required": [
+          "asset_id",
+          "asset_version",
+          "variant",
+          "sources",
+          "review_status",
+          "parts",
+          "views"
+        ],
+        "title": "AssetManifest",
+        "type": "object"
+      },
+      "AudioChunk": {
+        "additionalProperties": false,
+        "properties": {
+          "stream_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Stream Id",
+            "type": "string"
+          },
+          "chunk_sequence": {
+            "minimum": 0,
+            "title": "Chunk Sequence",
+            "type": "integer"
+          },
+          "data": {
+            "minLength": 1,
+            "title": "Data",
+            "type": "string"
+          },
+          "sentence_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sentence Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stream_id",
+          "chunk_sequence",
+          "data",
+          "sentence_id"
+        ],
+        "title": "AudioChunk",
+        "type": "object"
+      },
+      "AudioChunkEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "audio.chunk",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/AudioChunk"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "AudioChunkEvent",
+        "type": "object"
+      },
+      "AudioEnd": {
+        "additionalProperties": false,
+        "properties": {
+          "last_chunk_sequence": {
+            "minimum": 0,
+            "title": "Last Chunk Sequence",
+            "type": "integer"
+          },
+          "sentence_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sentence Id",
+            "type": "string"
+          },
+          "stream_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Stream Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "last_chunk_sequence",
+          "sentence_id",
+          "stream_id"
+        ],
+        "title": "AudioEnd",
+        "type": "object"
+      },
+      "AudioEndEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "audio.end",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/AudioEnd"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "AudioEndEvent",
+        "type": "object"
+      },
+      "AudioFormat": {
+        "additionalProperties": false,
+        "properties": {
+          "encoding": {
+            "const": "pcm_s16le",
+            "default": "pcm_s16le",
+            "title": "Encoding",
+            "type": "string"
+          },
+          "sample_rate": {
+            "exclusiveMinimum": 0,
+            "title": "Sample Rate",
+            "type": "integer"
+          },
+          "channels": {
+            "const": 1,
+            "default": 1,
+            "title": "Channels",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sample_rate"
+        ],
+        "title": "AudioFormat",
+        "type": "object"
+      },
+      "AudioInput": {
+        "additionalProperties": false,
+        "properties": {
+          "stream_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Stream Id",
+            "type": "string"
+          },
+          "chunk_sequence": {
+            "minimum": 0,
+            "title": "Chunk Sequence",
+            "type": "integer"
+          },
+          "data": {
+            "minLength": 1,
+            "title": "Data",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stream_id",
+          "chunk_sequence",
+          "data"
+        ],
+        "title": "AudioInput",
+        "type": "object"
+      },
+      "AudioInputEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "audio.input",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/AudioInput"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "AudioInputEvent",
+        "type": "object"
+      },
+      "AudioStart": {
+        "additionalProperties": false,
+        "properties": {
+          "encoding": {
+            "const": "pcm_s16le",
+            "default": "pcm_s16le",
+            "title": "Encoding",
+            "type": "string"
+          },
+          "sample_rate": {
+            "exclusiveMinimum": 0,
+            "title": "Sample Rate",
+            "type": "integer"
+          },
+          "channels": {
+            "const": 1,
+            "default": 1,
+            "title": "Channels",
+            "type": "integer"
+          },
+          "sentence_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sentence Id",
+            "type": "string"
+          },
+          "stream_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Stream Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sample_rate",
+          "sentence_id",
+          "stream_id"
+        ],
+        "title": "AudioStart",
+        "type": "object"
+      },
+      "AudioStartEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "audio.start",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/AudioStart"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "AudioStartEvent",
+        "type": "object"
+      },
+      "BakedAudio": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "minLength": 1,
+            "title": "Path",
+            "type": "string"
+          },
+          "bake_hash": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Bake Hash",
+            "type": "string"
+          },
+          "format": {
+            "$ref": "#/components/schemas/AudioFormat"
+          }
+        },
+        "required": [
+          "path",
+          "bake_hash",
+          "format"
+        ],
+        "title": "BakedAudio",
+        "type": "object"
+      },
+      "Cancel": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "Cancel",
+        "type": "object"
+      },
+      "CanonicalText": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "normalizer_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Normalizer Version",
+            "type": "string"
+          },
+          "diagnostics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Diagnostics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "text",
+          "normalizer_version",
+          "diagnostics"
+        ],
+        "title": "CanonicalText",
+        "type": "object"
+      },
+      "Capabilities": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "input_audio": {
+            "$ref": "#/components/schemas/AudioFormat"
+          },
+          "max_utterance_ms": {
+            "exclusiveMinimum": 0,
+            "title": "Max Utterance Ms",
+            "type": "integer"
+          },
+          "max_queue_chunks": {
+            "exclusiveMinimum": 0,
+            "title": "Max Queue Chunks",
+            "type": "integer"
+          },
+          "stt_streaming": {
+            "title": "Stt Streaming",
+            "type": "boolean"
+          },
+          "visuals": {
+            "title": "Visuals",
+            "type": "boolean"
+          },
+          "profile": {
+            "enum": [
+              "mock",
+              "real",
+              "evaluation"
+            ],
+            "title": "Profile",
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_audio",
+          "max_utterance_ms",
+          "max_queue_chunks",
+          "stt_streaming",
+          "visuals",
+          "profile"
+        ],
+        "title": "Capabilities",
+        "type": "object"
+      },
+      "ChannelJob": {
+        "additionalProperties": false,
+        "properties": {
+          "business_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Business Id",
+            "type": "string"
+          },
+          "sender_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sender Id",
+            "type": "string"
+          },
+          "message_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Message Id",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "pending",
+              "processing",
+              "completed",
+              "failed"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "business_id",
+          "sender_id",
+          "message_id",
+          "state"
+        ],
+        "title": "ChannelJob",
+        "type": "object"
+      },
+      "CheckResult": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "enum": [
+              "approved",
+              "rejected",
+              "refusal"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "evidence_checks": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Evidence Checks",
+            "type": "array"
+          },
+          "output": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovedSentence"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "status",
+          "reasons",
+          "evidence_checks"
+        ],
+        "title": "CheckResult",
+        "type": "object"
+      },
+      "Credentials": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "minLength": 1,
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "format": "password",
+            "title": "Password",
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "Credentials",
+        "type": "object"
+      },
+      "CurriculumUnit": {
+        "additionalProperties": false,
+        "properties": {
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "title_en": {
+            "minLength": 1,
+            "title": "Title En",
+            "type": "string"
+          },
+          "title_ur": {
+            "minLength": 1,
+            "title": "Title Ur",
+            "type": "string"
+          },
+          "family_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Family Id",
+            "type": "string"
+          },
+          "track_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Track Ids",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceMapping"
+            },
+            "minItems": 1,
+            "title": "Sources",
+            "type": "array"
+          },
+          "outcomes": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Outcomes",
+            "type": "array"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "readiness": {
+            "enum": [
+              "draft",
+              "mapped",
+              "playable"
+            ],
+            "title": "Readiness",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_id",
+          "title_en",
+          "title_ur",
+          "family_id",
+          "track_ids",
+          "sources",
+          "outcomes",
+          "content_version",
+          "readiness"
+        ],
+        "title": "CurriculumUnit",
+        "type": "object"
+      },
+      "SourceMapping": {
+        "additionalProperties": false,
+        "properties": {
+          "source_revision": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Source Revision",
+            "type": "string"
+          },
+          "source_file": {
+            "minLength": 1,
+            "title": "Source File",
+            "type": "string"
+          },
+          "course": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Course",
+            "type": "string"
+          },
+          "semester": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Semester"
+          },
+          "stream": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Stream",
+            "type": "string"
+          },
+          "leaf_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Leaf Id",
+            "type": "string"
+          },
+          "original_key": {
+            "minLength": 1,
+            "title": "Original Key",
+            "type": "string"
+          },
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Aliases",
+            "type": "array"
+          },
+          "unit_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Unit Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "source_revision",
+          "source_file",
+          "course",
+          "stream",
+          "leaf_id",
+          "original_key",
+          "unit_ids"
+        ],
+        "title": "SourceMapping",
+        "type": "object"
+      },
+      "Curriculum": {
+        "additionalProperties": false,
+        "properties": {
+          "course_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Course Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/CurriculumUnit"
+            },
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "course_id",
+          "content_version",
+          "units"
+        ],
+        "title": "Curriculum",
+        "type": "object"
+      },
+      "Empty": {
+        "additionalProperties": false,
+        "properties": {},
+        "title": "Empty",
+        "type": "object"
+      },
+      "Envelope": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Turn Id"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "sequence"
+        ],
+        "title": "Envelope",
+        "type": "object"
+      },
+      "Error": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Code",
+            "type": "string"
+          },
+          "recoverable": {
+            "title": "Recoverable",
+            "type": "boolean"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "correlation_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Correlation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "recoverable",
+          "message",
+          "correlation_id"
+        ],
+        "title": "Error",
+        "type": "object"
+      },
+      "ErrorEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Turn Id"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "error",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Error"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "ErrorEvent",
+        "type": "object"
+      },
+      "Passage": {
+        "additionalProperties": false,
+        "properties": {
+          "passage_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Passage Id",
+            "type": "string"
+          },
+          "source_location": {
+            "minLength": 1,
+            "title": "Source Location",
+            "type": "string"
+          },
+          "source_hash": {
+            "minLength": 1,
+            "title": "Source Hash",
+            "type": "string"
+          },
+          "canonical_text": {
+            "minLength": 1,
+            "title": "Canonical Text",
+            "type": "string"
+          },
+          "unit_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Unit Ids",
+            "type": "array"
+          },
+          "track_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Track Ids",
+            "type": "array"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "review_status": {
+            "enum": [
+              "draft",
+              "reviewed",
+              "withheld"
+            ],
+            "title": "Review Status",
+            "type": "string"
+          },
+          "safety": {
+            "enum": [
+              "ordinary",
+              "safety",
+              "procedure"
+            ],
+            "title": "Safety",
+            "type": "string"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reviewed By"
+          },
+          "review_reference": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Review Reference"
+          },
+          "exclusion_reason": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Exclusion Reason"
+          }
+        },
+        "required": [
+          "passage_id",
+          "source_location",
+          "source_hash",
+          "canonical_text",
+          "unit_ids",
+          "track_ids",
+          "content_version",
+          "review_status",
+          "safety"
+        ],
+        "title": "Passage",
+        "type": "object"
+      },
+      "EvidenceHit": {
+        "additionalProperties": false,
+        "properties": {
+          "passage": {
+            "$ref": "#/components/schemas/Passage"
+          },
+          "scores": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Scores",
+            "type": "object"
+          },
+          "method": {
+            "minLength": 1,
+            "title": "Method",
+            "type": "string"
+          }
+        },
+        "required": [
+          "passage",
+          "scores",
+          "method"
+        ],
+        "title": "EvidenceHit",
+        "type": "object"
+      },
+      "RetrievalRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_text": {
+            "minLength": 1,
+            "title": "Canonical Text",
+            "type": "string"
+          },
+          "course_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Course Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "index_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Index Version",
+            "type": "string"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "hypothesis_revision": {
+            "minimum": 0,
+            "title": "Hypothesis Revision",
+            "type": "integer"
+          },
+          "final": {
+            "title": "Final",
+            "type": "boolean"
+          },
+          "mode": {
+            "default": "lesson_first",
+            "enum": [
+              "lesson_first",
+              "whole_course"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "canonical_text",
+          "course_id",
+          "content_version",
+          "index_version",
+          "unit_id",
+          "turn_id",
+          "hypothesis_revision",
+          "final"
+        ],
+        "title": "RetrievalRequest",
+        "type": "object"
+      },
+      "EvidenceSet": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "$ref": "#/components/schemas/RetrievalRequest"
+          },
+          "passages": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceHit"
+            },
+            "title": "Passages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "request",
+          "passages"
+        ],
+        "title": "EvidenceSet",
+        "type": "object"
+      },
+      "EvidenceSpan": {
+        "additionalProperties": false,
+        "properties": {
+          "passage_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Passage Id",
+            "type": "string"
+          },
+          "quote": {
+            "minLength": 1,
+            "title": "Quote",
+            "type": "string"
+          }
+        },
+        "required": [
+          "passage_id",
+          "quote"
+        ],
+        "title": "EvidenceSpan",
+        "type": "object"
+      },
+      "FinalTranscript": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_text": {
+            "title": "Canonical Text",
+            "type": "string"
+          },
+          "hypothesis_revision": {
+            "minimum": 0,
+            "title": "Hypothesis Revision",
+            "type": "integer"
+          },
+          "final": {
+            "const": true,
+            "default": true,
+            "title": "Final",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "canonical_text",
+          "hypothesis_revision"
+        ],
+        "title": "FinalTranscript",
+        "type": "object"
+      },
+      "Health": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "enum": [
+              "ok",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "profile": {
+            "enum": [
+              "mock",
+              "real",
+              "evaluation"
+            ],
+            "title": "Profile",
+            "type": "string"
+          },
+          "capabilities": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "title": "Capabilities",
+            "type": "object"
+          }
+        },
+        "required": [
+          "status",
+          "profile",
+          "capabilities"
+        ],
+        "title": "Health",
+        "type": "object"
+      },
+      "HttpError": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "correlation_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Correlation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "correlation_id"
+        ],
+        "title": "HttpError",
+        "type": "object"
+      },
+      "LessonControl": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "play",
+              "pause",
+              "repeat"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "sentence_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sentence Id"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "LessonControl",
+        "type": "object"
+      },
+      "LessonControlEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Turn Id"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "lesson.control",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/LessonControl"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "LessonControlEvent",
+        "type": "object"
+      },
+      "LessonCursor": {
+        "additionalProperties": false,
+        "properties": {
+          "cursor_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Cursor Id",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "lesson_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "lesson_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Lesson Version",
+            "type": "string"
+          },
+          "last_completed_sentence_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Completed Sentence Id"
+          },
+          "restart_sentence_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Restart Sentence Id"
+          }
+        },
+        "required": [
+          "cursor_id",
+          "revision",
+          "unit_id",
+          "content_version",
+          "lesson_id",
+          "lesson_version"
+        ],
+        "title": "LessonCursor",
+        "type": "object"
+      },
+      "LessonSentence": {
+        "additionalProperties": false,
+        "properties": {
+          "sentence_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sentence Id",
+            "type": "string"
+          },
+          "canonical_text": {
+            "minLength": 1,
+            "title": "Canonical Text",
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "visual_target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisualTarget"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "audio": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BakedAudio"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "sentence_id",
+          "canonical_text",
+          "evidence_ids"
+        ],
+        "title": "LessonSentence",
+        "type": "object"
+      },
+      "PartialTranscript": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_text": {
+            "title": "Canonical Text",
+            "type": "string"
+          },
+          "hypothesis_revision": {
+            "minimum": 0,
+            "title": "Hypothesis Revision",
+            "type": "integer"
+          },
+          "final": {
+            "const": false,
+            "default": false,
+            "title": "Final",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "canonical_text",
+          "hypothesis_revision"
+        ],
+        "title": "PartialTranscript",
+        "type": "object"
+      },
+      "Playback": {
+        "additionalProperties": false,
+        "properties": {
+          "sentence_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sentence Id",
+            "type": "string"
+          },
+          "stream_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Stream Id",
+            "type": "string"
+          },
+          "client_monotonic_ms": {
+            "title": "Client Monotonic Ms",
+            "type": "number"
+          },
+          "interrupted_sample": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Interrupted Sample"
+          }
+        },
+        "required": [
+          "sentence_id",
+          "stream_id",
+          "client_monotonic_ms"
+        ],
+        "title": "Playback",
+        "type": "object"
+      },
+      "PlaybackEndedEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "playback.ended",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Playback"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "PlaybackEndedEvent",
+        "type": "object"
+      },
+      "PlaybackInterruptedEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "playback.interrupted",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Playback"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "PlaybackInterruptedEvent",
+        "type": "object"
+      },
+      "PlaybackStartedEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "playback.started",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Playback"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "PlaybackStartedEvent",
+        "type": "object"
+      },
+      "PreparedLesson": {
+        "additionalProperties": false,
+        "properties": {
+          "lesson_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "lesson_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Lesson Version",
+            "type": "string"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "sentences": {
+            "items": {
+              "$ref": "#/components/schemas/LessonSentence"
+            },
+            "minItems": 1,
+            "title": "Sentences",
+            "type": "array"
+          }
+        },
+        "required": [
+          "lesson_id",
+          "lesson_version",
+          "unit_id",
+          "content_version",
+          "sentences"
+        ],
+        "title": "PreparedLesson",
+        "type": "object"
+      },
+      "PrivateQuizItem": {
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "question": {
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minProperties": 2,
+            "title": "Options",
+            "type": "object"
+          },
+          "expected_choice": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Expected Choice",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_id",
+          "question",
+          "options",
+          "expected_choice"
+        ],
+        "title": "PrivateQuizItem",
+        "type": "object"
+      },
+      "PrivateVivaResult": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Attempt Id",
+            "type": "string"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "assessment_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Assessment Version",
+            "type": "string"
+          },
+          "outcome": {
+            "enum": [
+              "passed",
+              "not_yet_passed",
+              "incomplete"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "feedback": {
+            "minLength": 1,
+            "title": "Feedback",
+            "type": "string"
+          },
+          "item_status": {
+            "additionalProperties": {
+              "enum": [
+                "passed",
+                "not_yet_passed",
+                "incomplete"
+              ],
+              "type": "string"
+            },
+            "title": "Item Status",
+            "type": "object"
+          },
+          "transcript_references": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Transcript References",
+            "type": "array"
+          },
+          "matched_key_points": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Matched Key Points",
+            "type": "array"
+          },
+          "missing_key_points": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Missing Key Points",
+            "type": "array"
+          },
+          "evaluator_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Evaluator Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attempt_id",
+          "unit_id",
+          "content_version",
+          "assessment_version",
+          "outcome",
+          "feedback",
+          "item_status",
+          "transcript_references",
+          "matched_key_points",
+          "missing_key_points",
+          "evaluator_version"
+        ],
+        "title": "PrivateVivaResult",
+        "type": "object"
+      },
+      "UnitProgress": {
+        "additionalProperties": false,
+        "properties": {
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LessonCursor"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "quiz_attempt_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Quiz Attempt Id"
+          },
+          "viva_attempt_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Viva Attempt Id"
+          },
+          "finished": {
+            "title": "Finished",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "unit_id",
+          "content_version",
+          "finished"
+        ],
+        "title": "UnitProgress",
+        "type": "object"
+      },
+      "Progress": {
+        "additionalProperties": false,
+        "properties": {
+          "units": {
+            "items": {
+              "$ref": "#/components/schemas/UnitProgress"
+            },
+            "title": "Units",
+            "type": "array"
+          }
+        },
+        "required": [
+          "units"
+        ],
+        "title": "Progress",
+        "type": "object"
+      },
+      "ProviderFailure": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "enum": [
+              "timeout",
+              "throttled",
+              "quota_exhausted",
+              "authentication",
+              "unavailable"
+            ],
+            "title": "Code",
+            "type": "string"
+          },
+          "recoverable": {
+            "title": "Recoverable",
+            "type": "boolean"
+          },
+          "fallback_ready": {
+            "title": "Fallback Ready",
+            "type": "boolean"
+          },
+          "provider": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "recoverable",
+          "fallback_ready",
+          "provider"
+        ],
+        "title": "ProviderFailure",
+        "type": "object"
+      },
+      "ProviderMetadata": {
+        "additionalProperties": false,
+        "properties": {
+          "provider": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Provider",
+            "type": "string"
+          },
+          "model": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Model",
+            "type": "string"
+          },
+          "mock": {
+            "title": "Mock",
+            "type": "boolean"
+          },
+          "timings_ms": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Timings Ms",
+            "type": "object"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Language"
+          },
+          "converter_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Converter Version"
+          },
+          "decode": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "title": "Decode",
+            "type": "object"
+          }
+        },
+        "required": [
+          "provider",
+          "model",
+          "mock"
+        ],
+        "title": "ProviderMetadata",
+        "type": "object"
+      },
+      "QuizItem": {
+        "additionalProperties": false,
+        "properties": {
+          "item_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "question": {
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minProperties": 2,
+            "title": "Options",
+            "type": "object"
+          }
+        },
+        "required": [
+          "item_id",
+          "question",
+          "options"
+        ],
+        "title": "QuizItem",
+        "type": "object"
+      },
+      "PublicQuiz": {
+        "additionalProperties": false,
+        "properties": {
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "assessment_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Assessment Version",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/QuizItem"
+            },
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "unit_id",
+          "content_version",
+          "assessment_version",
+          "items"
+        ],
+        "title": "PublicQuiz",
+        "type": "object"
+      },
+      "TextQuestion": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "TextQuestion",
+        "type": "object"
+      },
+      "QuestionTextEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "question.text",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/TextQuestion"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "QuestionTextEvent",
+        "type": "object"
+      },
+      "QuizDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "assessment_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Assessment Version",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PrivateQuizItem"
+            },
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "unit_id",
+          "content_version",
+          "assessment_version",
+          "items"
+        ],
+        "title": "QuizDefinition",
+        "type": "object"
+      },
+      "QuizResult": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Attempt Id",
+            "type": "string"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "assessment_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Assessment Version",
+            "type": "string"
+          },
+          "outcome": {
+            "enum": [
+              "passed",
+              "not_yet_passed",
+              "incomplete"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "feedback": {
+            "minLength": 1,
+            "title": "Feedback",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attempt_id",
+          "unit_id",
+          "content_version",
+          "assessment_version",
+          "outcome",
+          "feedback"
+        ],
+        "title": "QuizResult",
+        "type": "object"
+      },
+      "QuizSubmit": {
+        "additionalProperties": false,
+        "properties": {
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "assessment_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Assessment Version",
+            "type": "string"
+          },
+          "choices": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Choices",
+            "type": "object"
+          }
+        },
+        "required": [
+          "unit_id",
+          "content_version",
+          "assessment_version",
+          "choices"
+        ],
+        "title": "QuizSubmit",
+        "type": "object"
+      },
+      "ReleaseContext": {
+        "additionalProperties": false,
+        "properties": {
+          "approved_prefix": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Approved Prefix",
+            "type": "array"
+          },
+          "played_prefix": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Played Prefix",
+            "type": "array"
+          },
+          "procedure_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Procedure Id"
+          },
+          "required_warning_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Required Warning Ids",
+            "type": "array"
+          },
+          "reviewed_prerequisite_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Reviewed Prerequisite Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "approved_prefix",
+          "played_prefix",
+          "required_warning_ids",
+          "reviewed_prerequisite_ids"
+        ],
+        "title": "ReleaseContext",
+        "type": "object"
+      },
+      "Resume": {
+        "additionalProperties": false,
+        "properties": {
+          "cursor_revision": {
+            "minimum": 0,
+            "title": "Cursor Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cursor_revision"
+        ],
+        "title": "Resume",
+        "type": "object"
+      },
+      "SentenceApprovedEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "sentence.approved",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/ApprovedSentence"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "SentenceApprovedEvent",
+        "type": "object"
+      },
+      "SentenceCandidate": {
+        "additionalProperties": false,
+        "properties": {
+          "sentence_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sentence Id",
+            "type": "string"
+          },
+          "canonical_text": {
+            "minLength": 1,
+            "title": "Canonical Text",
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "evidence_spans": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceSpan"
+            },
+            "title": "Evidence Spans",
+            "type": "array"
+          },
+          "visual_target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisualTarget"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "sentence_id",
+          "canonical_text",
+          "evidence_ids",
+          "evidence_spans"
+        ],
+        "title": "SentenceCandidate",
+        "type": "object"
+      },
+      "SessionCreate": {
+        "additionalProperties": false,
+        "description": "Untrusted selection only; trusted teaching context is resolved by the server.",
+        "properties": {
+          "course_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Course Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "lesson_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "visuals": {
+            "default": true,
+            "title": "Visuals",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "course_id",
+          "content_version",
+          "unit_id",
+          "lesson_id"
+        ],
+        "title": "SessionCreate",
+        "type": "object"
+      },
+      "SessionResumeEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Turn Id"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "session.resume",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Resume"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "SessionResumeEvent",
+        "type": "object"
+      },
+      "TeachingContext": {
+        "additionalProperties": false,
+        "properties": {
+          "course_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Course Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "lesson_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Lesson Id",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "tutor",
+              "viva"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "confirmed_sentence_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Confirmed Sentence Id"
+          },
+          "visual_context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisualTarget"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "course_id",
+          "content_version",
+          "unit_id",
+          "lesson_id",
+          "mode"
+        ],
+        "title": "TeachingContext",
+        "type": "object"
+      },
+      "SessionState": {
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "context": {
+            "$ref": "#/components/schemas/TeachingContext"
+          },
+          "cursor": {
+            "$ref": "#/components/schemas/LessonCursor"
+          },
+          "active_attempt_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Active Attempt Id"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/Capabilities"
+          },
+          "paused": {
+            "title": "Paused",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "context",
+          "cursor",
+          "capabilities",
+          "paused"
+        ],
+        "title": "SessionState",
+        "type": "object"
+      },
+      "SessionStateEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Turn Id"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "session.state",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/SessionState"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "SessionStateEvent",
+        "type": "object"
+      },
+      "SpeechEnd": {
+        "additionalProperties": false,
+        "properties": {
+          "last_chunk_sequence": {
+            "minimum": 0,
+            "title": "Last Chunk Sequence",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "last_chunk_sequence"
+        ],
+        "title": "SpeechEnd",
+        "type": "object"
+      },
+      "SpeechEndEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "speech.end",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/SpeechEnd"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "SpeechEndEvent",
+        "type": "object"
+      },
+      "SpeechStart": {
+        "additionalProperties": false,
+        "properties": {
+          "playback_sentence_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Playback Sentence Id"
+          }
+        },
+        "title": "SpeechStart",
+        "type": "object"
+      },
+      "SpeechStartEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "speech.start",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/SpeechStart"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "SpeechStartEvent",
+        "type": "object"
+      },
+      "SpeechText": {
+        "additionalProperties": false,
+        "properties": {
+          "sentence_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Sentence Id",
+            "type": "string"
+          },
+          "text": {
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "normalizer_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Normalizer Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sentence_id",
+          "text",
+          "normalizer_version"
+        ],
+        "title": "SpeechText",
+        "type": "object"
+      },
+      "Transcript": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_text": {
+            "title": "Canonical Text",
+            "type": "string"
+          },
+          "hypothesis_revision": {
+            "minimum": 0,
+            "title": "Hypothesis Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "canonical_text",
+          "hypothesis_revision"
+        ],
+        "title": "Transcript",
+        "type": "object"
+      },
+      "TranscriptFinalEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "transcript.final",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/FinalTranscript"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "TranscriptFinalEvent",
+        "type": "object"
+      },
+      "TranscriptPartialEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "transcript.partial",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/PartialTranscript"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "TranscriptPartialEvent",
+        "type": "object"
+      },
+      "TranscriptUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "hypothesis_revision": {
+            "minimum": 0,
+            "title": "Hypothesis Revision",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "final": {
+            "title": "Final",
+            "type": "boolean"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ProviderMetadata"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Confidence"
+          }
+        },
+        "required": [
+          "turn_id",
+          "hypothesis_revision",
+          "text",
+          "final",
+          "metadata"
+        ],
+        "title": "TranscriptUpdate",
+        "type": "object"
+      },
+      "TurnCancelEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "turn.cancel",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Cancel"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "TurnCancelEvent",
+        "type": "object"
+      },
+      "TurnCompleted": {
+        "additionalProperties": false,
+        "properties": {
+          "outcome": {
+            "enum": [
+              "answered",
+              "refused",
+              "cancelled",
+              "failed"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "restart_sentence_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Restart Sentence Id"
+          }
+        },
+        "required": [
+          "outcome"
+        ],
+        "title": "TurnCompleted",
+        "type": "object"
+      },
+      "TurnCompletedEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "turn.completed",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/TurnCompleted"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "TurnCompletedEvent",
+        "type": "object"
+      },
+      "TurnStartedEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Turn Id",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "turn.started",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/Empty"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "turn_id",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "TurnStartedEvent",
+        "type": "object"
+      },
+      "VivaControl": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Attempt Id",
+            "type": "string"
+          },
+          "action": {
+            "enum": [
+              "repeat",
+              "clarify",
+              "exit",
+              "resume"
+            ],
+            "title": "Action",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attempt_id",
+          "action"
+        ],
+        "title": "VivaControl",
+        "type": "object"
+      },
+      "VivaControlEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Turn Id"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "viva.control",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/VivaControl"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "VivaControlEvent",
+        "type": "object"
+      },
+      "VivaCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "unit_id",
+          "content_version"
+        ],
+        "title": "VivaCreate",
+        "type": "object"
+      },
+      "VivaPrompt": {
+        "additionalProperties": false,
+        "properties": {
+          "prompt_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Prompt Id",
+            "type": "string"
+          },
+          "text": {
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "clarification": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Clarification"
+          },
+          "required_key_points": {
+            "additionalProperties": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "minProperties": 1,
+            "title": "Required Key Points",
+            "type": "object"
+          },
+          "evidence_ids": {
+            "items": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Evidence Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "prompt_id",
+          "text",
+          "required_key_points",
+          "evidence_ids"
+        ],
+        "title": "VivaPrompt",
+        "type": "object"
+      },
+      "VivaDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "assessment_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Assessment Version",
+            "type": "string"
+          },
+          "prompts": {
+            "items": {
+              "$ref": "#/components/schemas/VivaPrompt"
+            },
+            "minItems": 1,
+            "title": "Prompts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "unit_id",
+          "content_version",
+          "assessment_version",
+          "prompts"
+        ],
+        "title": "VivaDefinition",
+        "type": "object"
+      },
+      "VivaResult": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Attempt Id",
+            "type": "string"
+          },
+          "unit_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Unit Id",
+            "type": "string"
+          },
+          "content_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Content Version",
+            "type": "string"
+          },
+          "assessment_version": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Assessment Version",
+            "type": "string"
+          },
+          "outcome": {
+            "enum": [
+              "passed",
+              "not_yet_passed",
+              "incomplete"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "feedback": {
+            "minLength": 1,
+            "title": "Feedback",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attempt_id",
+          "unit_id",
+          "content_version",
+          "assessment_version",
+          "outcome",
+          "feedback"
+        ],
+        "title": "VivaResult",
+        "type": "object"
+      },
+      "VivaResultEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Turn Id"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "viva.result",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/VivaResult"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "VivaResultEvent",
+        "type": "object"
+      },
+      "VivaState": {
+        "additionalProperties": false,
+        "properties": {
+          "attempt_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Attempt Id",
+            "type": "string"
+          },
+          "prompt_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Prompt Id"
+          },
+          "state": {
+            "enum": [
+              "prompt",
+              "listening",
+              "incomplete",
+              "completed"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attempt_id",
+          "state"
+        ],
+        "title": "VivaState",
+        "type": "object"
+      },
+      "VivaStateEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "protocol": {
+            "const": "rahbar.v1",
+            "default": "rahbar.v1",
+            "title": "Protocol",
+            "type": "string"
+          },
+          "event_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "session_id": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "connection_epoch": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Connection Epoch",
+            "type": "string"
+          },
+          "generation": {
+            "minimum": 0,
+            "title": "Generation",
+            "type": "integer"
+          },
+          "turn_id": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Turn Id"
+          },
+          "sequence": {
+            "minimum": 0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "type": {
+            "const": "viva.state",
+            "title": "Type",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/VivaState"
+          }
+        },
+        "required": [
+          "event_id",
+          "session_id",
+          "connection_epoch",
+          "generation",
+          "sequence",
+          "type",
+          "payload"
+        ],
+        "title": "VivaStateEvent",
+        "type": "object"
+      },
+      "WebhookAccepted": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "accepted",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "WebhookAccepted",
+        "type": "object"
+      },
+      "WhatsAppWebhook": {
+        "additionalProperties": false,
+        "description": "Provider payload remains untrusted until raw-body signature verification.",
+        "properties": {
+          "object": {
+            "minLength": 1,
+            "title": "Object",
+            "type": "string"
+          },
+          "entry": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Entry",
+            "type": "array"
+          }
+        },
+        "required": [
+          "object"
+        ],
+        "title": "WhatsAppWebhook",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "sessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "rahbar_session"
+      },
+      "hostBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "webhookSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Hub-Signature-256"
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "sentence.approved",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 1,
+      "payload": {
+        "sentence_id": "sentence-1",
+        "canonical_text": "یہ سوال اس کورس سے متعلق نہیں ہے۔",
+        "evidence_ids": [],
+        "visual_target": null
+      }
+    }
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "turn.completed",
+      "event_id": "event-2",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 2,
+      "payload": {
+        "outcome": "refused"
+      }
+    }
+  }
+]

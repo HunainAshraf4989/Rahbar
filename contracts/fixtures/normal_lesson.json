@@ -1,0 +1,22 @@
+[
+  {
+    "model": "PreparedLesson",
+    "data": {
+      "lesson_id": "lesson-1",
+      "lesson_version": "lesson-v1",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "sentences": [
+        {
+          "sentence_id": "sentence-1",
+          "canonical_text": "یہ relay کی coil ہے۔",
+          "evidence_ids": [
+            "passage-1"
+          ],
+          "visual_target": null,
+          "audio": null
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,236 @@
+[
+  {
+    "scenario": "assessment-pair-1",
+    "expected_finished": true,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-1",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-1",
+    "expected_finished": true,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-1",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-2",
+    "expected_finished": false,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-2",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-2",
+    "expected_finished": false,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-2",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "not_yet_passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-3",
+    "expected_finished": false,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-3",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-3",
+    "expected_finished": false,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-3",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "incomplete",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-4",
+    "expected_finished": false,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-4",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "not_yet_passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-4",
+    "expected_finished": false,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-4",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-5",
+    "expected_finished": false,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-5",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "not_yet_passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-5",
+    "expected_finished": false,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-5",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "not_yet_passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-6",
+    "expected_finished": false,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-6",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "not_yet_passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-6",
+    "expected_finished": false,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-6",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "incomplete",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-7",
+    "expected_finished": false,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-7",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "incomplete",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-7",
+    "expected_finished": false,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-7",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-8",
+    "expected_finished": false,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-8",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "incomplete",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-8",
+    "expected_finished": false,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-8",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "not_yet_passed",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-9",
+    "expected_finished": false,
+    "model": "QuizResult",
+    "data": {
+      "attempt_id": "quiz-attempt-9",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "quiz-v1",
+      "outcome": "incomplete",
+      "feedback": "Synthetic assessment result"
+    }
+  },
+  {
+    "scenario": "assessment-pair-9",
+    "expected_finished": false,
+    "model": "VivaResult",
+    "data": {
+      "attempt_id": "viva-attempt-9",
+      "unit_id": "unit-1",
+      "content_version": "content-1",
+      "assessment_version": "viva-v1",
+      "outcome": "incomplete",
+      "feedback": "Synthetic assessment result"
+    }
+  }
+]

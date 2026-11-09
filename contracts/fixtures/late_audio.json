@@ -1,0 +1,39 @@
+[
+  {
+    "model": "event",
+    "direction": "client",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "turn.cancel",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 1,
+      "payload": {
+        "reason": "speech_start"
+      }
+    }
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "audio.chunk",
+      "event_id": "event-2",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-1",
+      "sequence": 2,
+      "payload": {
+        "sentence_id": "sentence-1",
+        "stream_id": "stream-1",
+        "chunk_sequence": 0,
+        "data": "AAA="
+      }
+    }
+  }
+]

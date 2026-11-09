@@ -1,0 +1,19 @@
+[
+  {
+    "model": "event",
+    "direction": "client",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "session.resume",
+      "event_id": "event-1",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": null,
+      "sequence": 1,
+      "payload": {
+        "cursor_revision": 2
+      }
+    }
+  }
+]

@@ -1,0 +1,19 @@
+[
+  {
+    "model": "EvidenceSet",
+    "data": {
+      "request": {
+        "canonical_text": "relay",
+        "course_id": "course-1",
+        "content_version": "content-1",
+        "index_version": "index-1",
+        "unit_id": "unit-1",
+        "turn_id": "turn-1",
+        "hypothesis_revision": 1,
+        "final": true,
+        "mode": "lesson_first"
+      },
+      "passages": []
+    }
+  }
+]

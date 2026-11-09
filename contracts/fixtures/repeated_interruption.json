@@ -1,0 +1,62 @@
+[
+  {
+    "model": "event",
+    "direction": "client",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "speech.start",
+      "event_id": "event-2",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-2",
+      "sequence": 2,
+      "payload": {}
+    }
+  },
+  {
+    "model": "event",
+    "direction": "client",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "speech.start",
+      "event_id": "event-3",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 1,
+      "turn_id": "turn-3",
+      "sequence": 3,
+      "payload": {}
+    }
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "turn.started",
+      "event_id": "event-2",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 2,
+      "turn_id": "turn-2",
+      "sequence": 2,
+      "payload": {}
+    }
+  },
+  {
+    "model": "event",
+    "direction": "server",
+    "data": {
+      "protocol": "rahbar.v1",
+      "type": "turn.started",
+      "event_id": "event-3",
+      "session_id": "session-1",
+      "connection_epoch": "connection-1",
+      "generation": 3,
+      "turn_id": "turn-3",
+      "sequence": 3,
+      "payload": {}
+    }
+  }
+]
