@@ -1,7 +1,7 @@
 import type {
   ApprovedSentence, AssetManifest, AudioChunkEvent, AudioEndEvent, AudioInputEvent,
   AudioStartEvent, ErrorEvent, LessonControlEvent, PlaybackEndedEvent, PlaybackStartedEvent,
-  PreparedLesson, SentenceApprovedEvent, SessionCreate, SessionState, SessionStateEvent,
+  PreparedLesson, QuestionTextEvent, SentenceApprovedEvent, SessionCreate, SessionState, SessionStateEvent,
   SpeechEndEvent, SpeechStartEvent, TranscriptFinalEvent, TurnStartedEvent,
 } from './api/contracts.generated';
 import { encodePcm, pcmWave } from './audio';
@@ -10,12 +10,19 @@ import type { MicVAD } from '@ricky0123/vad-web';
 type Incoming = SessionStateEvent | TurnStartedEvent | SentenceApprovedEvent | AudioStartEvent
   | AudioChunkEvent | AudioEndEvent | ErrorEvent | TranscriptFinalEvent;
 type Outgoing = LessonControlEvent | PlaybackStartedEvent | PlaybackEndedEvent
-  | SpeechStartEvent | SpeechEndEvent | AudioInputEvent;
+  | SpeechStartEvent | SpeechEndEvent | AudioInputEvent | QuestionTextEvent;
 type Payload<K extends Outgoing['type']> = Extract<Outgoing, {type: K}>['payload'];
 
 export type Phase = 'connecting' | 'disconnected' | 'ready' | 'loading' | 'lesson'
   | 'listening' | 'thinking' | 'answer' | 'complete';
 export type Issue = 'connection' | 'preparation' | 'playback' | 'provider' | 'microphone' | 'noSpeech' | 'tooLong';
+
+export type ChatMessage = {
+  id: string;
+  kind: 'lesson' | 'question' | 'answer';
+  text: string;
+  segmentId?: string;
+};
 
 export interface PlayerState {
   phase: Phase;
@@ -24,8 +31,8 @@ export interface PlayerState {
   session?: SessionState;
   active?: ApprovedSentence;
   completed?: number;
-  question?: string;
-  answer?: string;
+  messages: ChatMessage[];
+  playingMessageId?: string;
   issue?: Issue;
   microphone: 'off' | 'starting' | 'on';
 }
@@ -33,7 +40,12 @@ export interface PlayerState {
 const lessonPath = '/dev/lecture';
 const sessionPath = lessonPath + '/sessions';
 const storageKey = 'rahbar.relay.session';
-const initial: PlayerState = { phase: 'connecting', microphone: 'off' };
+export const maxQuestionLength = 1000;
+export const initialPlayerState: PlayerState = { phase: 'connecting', microphone: 'off', messages: [] };
+
+export function canAskText(phase: Phase): boolean {
+  return phase === 'ready' || phase === 'lesson' || phase === 'complete';
+}
 
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, init);
@@ -42,7 +54,8 @@ async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export class RelayPlayer {
-  private state = initial;
+  private state = initialPlayerState;
+  private messageSessionId?: string;
   private socket?: WebSocket;
   private abort?: AbortController;
   private media = new Audio();
@@ -58,7 +71,7 @@ export class RelayPlayer {
   private eventIds = new Set<string>();
   private turn?: string;
   private questionTurn?: string;
-  private pendingSpeech?: string;
+  private pendingTurn?: string;
   private questionTimer?: ReturnType<typeof setTimeout>;
   private approved?: ApprovedSentence;
   private playRequested = false;
@@ -78,7 +91,7 @@ export class RelayPlayer {
   async connect(mode: 'resume' | 'restart' = 'resume') {
     this.close();
     if (mode === 'restart') this.primeMedia();
-    this.set({ phase: 'connecting', issue: undefined, session: undefined, completed: undefined, question: undefined, answer: undefined });
+    this.set({ phase: 'connecting', issue: undefined, session: undefined, completed: undefined });
     const abort = new AbortController();
     this.abort = abort;
     const timeout = setTimeout(() => abort.abort(), 10_000);
@@ -127,6 +140,8 @@ export class RelayPlayer {
           const first = !this.epoch;
           this.receive(JSON.parse(event.data) as Incoming);
           if (first && this.epoch) {
+            if (this.messageSessionId !== session.session_id) this.set({ messages: [] });
+            this.messageSessionId = session.session_id;
             sessionStorage.setItem(storageKey, session.session_id);
             if (mode === 'restart') this.startPlayback('play');
           }
@@ -167,7 +182,7 @@ export class RelayPlayer {
 
   private resetTurn() {
     clearTimeout(this.questionTimer);
-    this.turn = this.pendingSpeech = this.questionTurn = undefined;
+    this.turn = this.pendingTurn = this.questionTurn = undefined;
   }
 
   private send<K extends Outgoing['type']>(type: K, payload: Payload<K>, turn?: string) {
@@ -185,8 +200,24 @@ export class RelayPlayer {
     this.startPlayback(this.state.phase === 'complete' ? 'repeat' : 'play');
   }
 
+  askText(input: string): boolean {
+    const text = input.trim();
+    if (!canAskText(this.state.phase) || !text || text.length > maxQuestionLength
+      || this.socket?.readyState !== WebSocket.OPEN) return false;
+    this.primeMedia();
+    const turn = crypto.randomUUID();
+    this.pendingTurn = this.questionTurn = turn;
+    this.playRequested = true;
+    this.set({
+      phase: 'thinking', issue: undefined,
+      messages: [...this.state.messages, { id: turn, kind: 'question', text }],
+    });
+    this.send('question.text', { text }, turn);
+    return true;
+  }
+
   private startPlayback(action: 'play' | 'repeat') {
-    this.set({ phase: 'loading', issue: undefined, answer: undefined, question: undefined });
+    this.set({ phase: 'loading', issue: undefined });
     this.playRequested = true;
     this.send('lesson.control', { action, sentence_id: null });
   }
@@ -222,7 +253,9 @@ export class RelayPlayer {
     if (this.mediaUrl) URL.revokeObjectURL(this.mediaUrl);
     this.mediaUrl = undefined;
     this.stream = this.approved = undefined;
-    if (this.state.active) this.set({ active: undefined });
+    if (this.state.active || this.state.playingMessageId) {
+      this.set({ active: undefined, playingMessageId: undefined });
+    }
   }
 
   private receive(event: Incoming) {
@@ -237,7 +270,7 @@ export class RelayPlayer {
     if (event.type === 'session.state') {
       this.epoch = event.connection_epoch;
       this.generation = event.generation;
-      if (this.pendingSpeech && !this.pausePending) return;
+      if (this.pendingTurn && !this.pausePending) return;
       this.stopOutput();
       this.resetTurn();
       this.pausePending = this.playRequested = false;
@@ -254,11 +287,11 @@ export class RelayPlayer {
         this.sendPause();
         return;
       }
-      if (this.pendingSpeech && event.turn_id !== this.pendingSpeech) return;
-      if (!this.playRequested && event.turn_id !== this.pendingSpeech) return;
+      if (this.pendingTurn && event.turn_id !== this.pendingTurn) return;
+      if (!this.playRequested && event.turn_id !== this.pendingTurn) return;
       this.stopOutput();
       this.turn = event.turn_id;
-      if (this.pendingSpeech === event.turn_id) this.pendingSpeech = undefined;
+      if (this.pendingTurn === event.turn_id) this.pendingTurn = undefined;
       return;
     }
 
@@ -268,7 +301,7 @@ export class RelayPlayer {
         this.sendPause();
         return;
       }
-      if (this.pendingSpeech || event.generation !== this.generation) return;
+      if (this.pendingTurn || event.generation !== this.generation) return;
       this.stopOutput();
       this.resetTurn();
       this.pausePending = this.playRequested = false;
@@ -276,7 +309,7 @@ export class RelayPlayer {
       this.set({ phase: this.state.session?.cursor.restart_sentence_id ? 'ready' : 'complete', issue: 'provider' });
       return;
     }
-    if (this.pausePending || this.pendingSpeech || !this.turn
+    if (this.pausePending || this.pendingTurn || !this.turn
       || event.turn_id !== this.turn || event.generation !== this.generation) return;
 
     switch (event.type) {
@@ -284,7 +317,9 @@ export class RelayPlayer {
         this.approved = event.payload;
         break;
       case 'transcript.final':
-        this.set({ question: event.payload.canonical_text });
+        this.set({
+          messages: [...this.state.messages, { id: event.event_id, kind: 'question', text: event.payload.canonical_text }],
+        });
         break;
       case 'audio.start':
         if (event.payload.sample_rate === 24000 && event.payload.channels === 1
@@ -336,10 +371,19 @@ export class RelayPlayer {
       if (this.mediaUrl !== url || started) return;
       started = true;
       const index = this.state.lesson?.sentences.findIndex(item => item.sentence_id === identity.sentence_id) ?? -1;
+      const previous = this.state.messages.at(-1);
+      const replaying = !isAnswer && previous?.kind === 'lesson' && previous.segmentId === identity.sentence_id;
+      const message: ChatMessage = replaying ? previous : {
+        id: stream.id,
+        kind: isAnswer ? 'answer' : 'lesson',
+        text: stream.sentence.canonical_text,
+        segmentId: isAnswer ? undefined : identity.sentence_id,
+      };
       this.set({
         ...(!isAnswer && index >= 0 ? { completed: index } : {}),
         phase: isAnswer ? 'answer' : 'lesson', active: stream.sentence,
-        ...(isAnswer ? { answer: stream.sentence.canonical_text } : {}),
+        messages: replaying ? this.state.messages : [...this.state.messages, message],
+        playingMessageId: message.id,
       });
       this.send('playback.started', { ...identity, client_monotonic_ms: performance.now(), interrupted_sample: null }, turn);
     };
@@ -425,9 +469,9 @@ export class RelayPlayer {
     const interrupted = this.state.active?.sentence_id ?? null;
     this.stopOutput();
     const turn = crypto.randomUUID();
-    this.pendingSpeech = this.questionTurn = turn;
+    this.pendingTurn = this.questionTurn = turn;
     this.playRequested = true;
-    this.set({ phase: 'listening', issue: undefined, question: undefined, answer: undefined });
+    this.set({ phase: 'listening', issue: undefined });
     this.send('speech.start', { playback_sentence_id: interrupted }, turn);
     clearTimeout(this.questionTimer);
     this.questionTimer = setTimeout(() => {

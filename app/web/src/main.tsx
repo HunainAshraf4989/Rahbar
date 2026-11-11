@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  ArrowLeft, ArrowRight, AudioLines, BookOpen, ChevronRight, CircleCheck,
-  Languages, LoaderCircle, Mic, MicOff, Pause, Play, RotateCcw, TriangleAlert,
+  ArrowLeft, ArrowRight, ArrowUp, AudioLines, ChevronRight, CircleCheck,
+  Languages, LoaderCircle, MessageCircle, Mic, MicOff, Pause, Play, RotateCcw, TriangleAlert,
 } from 'lucide-react';
 import '@fontsource-variable/dm-sans';
 import '@fontsource/noto-naskh-arabic/400.css';
@@ -11,12 +12,12 @@ import relayPreview from '../../../asset_gen/out/relay_4pin_cutaway.png';
 import { Diagram } from './Diagram';
 import { copy } from './copy';
 import type { Language } from './copy';
-import { RelayPlayer } from './relay';
-import type { PlayerState } from './relay';
+import { canAskText, initialPlayerState, maxQuestionLength, RelayPlayer } from './relay';
 import './styles.css';
 
 function MixedText({ text }: { text: string }) {
-  return <p className="mixed-text" lang="ur" dir="rtl">
+  const hasUrdu = /[\u0600-\u06ff]/.test(text);
+  return <p className="mixed-text" lang={hasUrdu ? 'ur' : 'en'} dir={hasUrdu ? 'rtl' : 'ltr'}>
     {text.split(/([A-Za-z0-9]+(?:[-' ][A-Za-z0-9]+)*)/).map((part, index) =>
       index % 2 ? <bdi lang="en" dir="ltr" key={index}>{part}</bdi> : part)}
   </p>;
@@ -46,9 +47,11 @@ function Course({ language }: { language: Language }) {
 
 function Lesson({ language }: { language: Language }) {
   const t = copy[language];
-  const [state, setState] = useState<PlayerState>({ phase: 'connecting', microphone: 'off' });
+  const [state, setState] = useState(initialPlayerState);
+  const [question, setQuestion] = useState('');
   const player = useRef<RelayPlayer | null>(null);
-  const transcript = useRef<HTMLOListElement>(null);
+  const thread = useRef<HTMLDivElement>(null);
+  const followThread = useRef(true);
   const Back = language === 'ur' ? ArrowRight : ArrowLeft;
 
   useEffect(() => {
@@ -61,7 +64,7 @@ function Lesson({ language }: { language: Language }) {
     };
   }, []);
 
-  const { lesson, phase, session, active } = state;
+  const { lesson, phase, session, active, messages } = state;
   const activeId = phase === 'lesson' ? active?.sentence_id : undefined;
   const total = lesson?.sentences.length ?? 0;
   const current = (lesson?.sentences.findIndex(item => item.sentence_id === activeId) ?? -1) + 1;
@@ -70,23 +73,29 @@ function Lesson({ language }: { language: Language }) {
   );
   const position = current || Math.min(completed + 1, total);
   const isPlaying = ['lesson', 'answer', 'loading', 'listening', 'thinking'].includes(phase);
-  const canPlay = phase === 'ready' || phase === 'complete' || isPlaying;
   const isComplete = phase === 'complete';
-  const canUseMic = phase !== 'connecting' && phase !== 'disconnected' && phase !== 'complete';
+  const canPlay = phase === 'ready' || isComplete || isPlaying;
+  const canUseMic = phase !== 'connecting' && phase !== 'disconnected' && !isComplete;
+  const canWrite = phase !== 'connecting' && phase !== 'disconnected';
   const PlayIcon = isPlaying ? Pause : isComplete ? RotateCcw : Play;
   const controlLabel = isPlaying ? t.pause : isComplete ? t.restart : completed ? t.resume : t.play;
   const MicIcon = state.microphone === 'on' ? Mic : state.microphone === 'starting' ? LoaderCircle : MicOff;
+  const micLabel = state.microphone === 'on' ? t.micOff : state.microphone === 'starting' ? t.micStarting : t.micOn;
 
   useEffect(() => {
-    const container = transcript.current;
-    const row = container?.querySelector<HTMLElement>('[aria-current="true"]');
-    if (!container || !row) return;
-    const parent = container.getBoundingClientRect();
-    const child = row.getBoundingClientRect();
-    if (child.top < parent.top || child.bottom > parent.bottom) {
-      container.scrollTop += child.top - parent.top;
+    const log = thread.current;
+    if (log && (followThread.current || messages.length === 0)) {
+      log.scrollTop = log.scrollHeight;
     }
-  }, [activeId]);
+  }, [messages]);
+
+  function submitQuestion(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (player.current?.askText(question)) {
+      followThread.current = true;
+      setQuestion('');
+    }
+  }
 
   return <main className="shell lesson-page" id="main">
     <nav className="breadcrumb" aria-label={t.courses}>
@@ -105,67 +114,77 @@ function Lesson({ language }: { language: Language }) {
       {phase === 'disconnected' && <button className="button secondary" onClick={() => void player.current?.connect()}>{t.reconnect}</button>}
     </div>}
 
-    <section className="panel controls" aria-label={t.voice}>
-      <div className="controls-top">
-        <div className="player-buttons">
-          <button className="button primary" disabled={!canPlay}
-            onClick={() => {
-              if (isPlaying) player.current?.pause();
-              else if (isComplete) void player.current?.connect('restart');
-              else player.current?.play();
-            }}>
-            <PlayIcon size={18} aria-hidden="true" />{controlLabel}
-          </button>
-          <button className="button secondary" disabled={!canPlay}
-            onClick={() => {
-              if (isComplete) player.current?.play();
-              else void player.current?.connect('restart');
-            }}>
-            {!isComplete && <RotateCcw size={18} aria-hidden="true" />}
-            {isComplete ? t.repeat : t.restart}
-          </button>
-          <button className="button secondary" disabled={!canUseMic && state.microphone === 'off'}
-            aria-pressed={state.microphone === 'on'}
-            onClick={() => void player.current?.toggleMic()}>
-            <MicIcon size={18} className={state.microphone === 'starting' ? 'spinner' : undefined} aria-hidden="true" />
-            {state.microphone === 'on' ? t.micOff : state.microphone === 'starting' ? t.micStarting : t.micOn}
-          </button>
-        </div>
-        <span className="player-status" role="status" data-phase={phase}>
-          {phase === 'complete' ? <CircleCheck size={17} aria-hidden="true" /> : <span className="status-dot" />}
-          {t.status[phase]}
-        </span>
-      </div>
-      {total > 0 && <div className="progress-row">
-        <progress value={completed} max={total} aria-label={t.transcript} />
-        <span>{t.position} <bdi>{position}</bdi> {t.of} <bdi>{total}</bdi></span>
-      </div>}
-      {canUseMic && <p className="mic-hint">{state.microphone === 'on' ? t.micReady : t.micHint}</p>}
-    </section>
-
     <div className="lesson-grid">
       <Diagram asset={state.asset} active={active?.visual_target} language={language} />
-      <section className="panel transcript" aria-labelledby="transcript-title">
+      <section className="panel tutor-chat" aria-labelledby="chat-title">
         <div className="panel-heading">
-          <h2 id="transcript-title"><BookOpen size={18} aria-hidden="true" />{t.transcript}</h2>
-          {total > 0 && <span className="segment-count">{total} {t.segments}</span>}
+          <h2 id="chat-title"><MessageCircle size={19} aria-hidden="true" />{t.chat}</h2>
+          <span className="player-status" role="status" data-phase={phase}>
+            {isComplete ? <CircleCheck size={17} aria-hidden="true" /> : <span className="status-dot" />}
+            {t.status[phase]}
+          </span>
         </div>
-        {lesson && <ol ref={transcript} className="transcript-list" tabIndex={0} aria-labelledby="transcript-title">
-          {lesson.sentences.map((sentence, index) => <li key={sentence.sentence_id}
-            aria-current={sentence.sentence_id === activeId ? 'true' : undefined}>
-            <span className="segment-number" aria-hidden="true">
-              {index < completed && sentence.sentence_id !== activeId ? <CircleCheck size={19} /> : String(index + 1).padStart(2, '0')}
-            </span>
-            <MixedText text={sentence.canonical_text} />
-          </li>)}
-        </ol>}
+
+        <div className="chat-thread" role="log" aria-labelledby="chat-title" tabIndex={0} ref={thread}
+          onScroll={event => {
+            const log = event.currentTarget;
+            followThread.current = log.scrollHeight - log.scrollTop - log.clientHeight < 64;
+          }}>
+          {messages.length === 0 ? <div className="chat-empty">
+            <span className="chat-empty-icon"><AudioLines size={23} aria-hidden="true" /></span>
+            <p>{t.chatEmpty}</p>
+          </div> : <ol className="chat-messages">
+            {messages.map(message => <li key={message.id} data-kind={message.kind}
+              aria-current={message.id === state.playingMessageId ? 'true' : undefined}>
+              <span className="message-label">
+                {message.kind === 'question' ? t.yourQuestion : message.kind === 'answer' ? t.tutorAnswer : t.lessonMessage}
+                {message.id === state.playingMessageId && <AudioLines size={14} aria-hidden="true" />}
+              </span>
+              <div className="message-bubble"><MixedText text={message.text} /></div>
+            </li>)}
+          </ol>}
+        </div>
+
+        <div className="chat-footer">
+          {total > 0 && <div className="progress-row">
+            <progress value={completed} max={total} aria-label={t.progress} />
+            <span>{t.position} <bdi>{position}</bdi> {t.of} <bdi>{total}</bdi></span>
+          </div>}
+          <div className="player-buttons" aria-label={t.voice} role="group">
+            <button className="button primary" disabled={!canPlay}
+              onClick={() => {
+                if (isPlaying) player.current?.pause();
+                else if (isComplete) void player.current?.connect('restart');
+                else player.current?.play();
+              }}>
+              <PlayIcon size={17} aria-hidden="true" />{controlLabel}
+            </button>
+            <button className="button secondary" disabled={!canPlay}
+              onClick={() => {
+                if (isComplete) player.current?.play();
+                else void player.current?.connect('restart');
+              }}>
+              {!isComplete && <RotateCcw size={16} aria-hidden="true" />}
+              {isComplete ? t.repeat : t.restart}
+            </button>
+          </div>
+          <form className="chat-composer" onSubmit={submitQuestion}>
+            <input dir="auto" aria-label={t.ask} placeholder={t.ask} maxLength={maxQuestionLength}
+              value={question} onChange={event => setQuestion(event.target.value)} disabled={!canWrite} />
+            <button type="button" className="button secondary icon-button" title={micLabel} aria-label={micLabel}
+              disabled={!canUseMic && state.microphone === 'off'} aria-pressed={state.microphone === 'on'}
+              onClick={() => void player.current?.toggleMic()}>
+              <MicIcon size={19} className={state.microphone === 'starting' ? 'spinner' : undefined} aria-hidden="true" />
+            </button>
+            <button type="submit" className="button primary icon-button" title={t.send} aria-label={t.send}
+              disabled={!canAskText(phase) || !question.trim()}>
+              <ArrowUp size={20} aria-hidden="true" />
+            </button>
+          </form>
+          {canUseMic && <p className="mic-hint">{state.microphone === 'on' ? t.micReady : t.micHint}</p>}
+        </div>
       </section>
     </div>
-
-    {(state.question || state.answer) && <section className="panel conversation" aria-label={t.tutorAnswer}>
-      {state.question && <div><h2>{t.yourQuestion}</h2><MixedText text={state.question} /></div>}
-      {state.answer && <div><h2>{t.tutorAnswer}</h2><MixedText text={state.answer} /></div>}
-    </section>}
   </main>;
 }
 

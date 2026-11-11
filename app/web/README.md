@@ -35,6 +35,11 @@ stops the current audio as soon as it detects speech. The server resumes the
 interrupted segment after the answer finishes. Reconnect loads the server's
 saved position and waits for you to press play.
 
+Type a question in the chat composer to use the same tutor without the
+microphone. Narration, submitted questions, and spoken answers appear in the
+conversation. The infographic canvas follows the current audio. Chat history
+stays in the open lesson and clears when you start a new lesson session.
+
 **Restart lesson** starts a fresh session and plays from the first segment.
 After completing the lesson, **Replay last segment** is also available.
 
