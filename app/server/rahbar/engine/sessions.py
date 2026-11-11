@@ -73,6 +73,7 @@ class PlaybackTicket:
     sentence_id: str
     stream_id: str
     kind: str
+    resume_lesson: bool = True
     started: bool = False
     sent: bool = False
 
@@ -185,10 +186,10 @@ class LectureConnection:
                 await self.error("lecture_audio_unavailable")
 
     async def audio(self, sentence: ApprovedSentence, pcm: bytes,
-                    kind: str, context: TurnContext) -> None:
+                    kind: str, context: TurnContext, *, resume_lesson: bool = True) -> None:
         if context is not self.context or context.cancelled.is_set():
             return
-        ticket = PlaybackTicket(sentence.sentence_id, uuid4().hex, kind)
+        ticket = PlaybackTicket(sentence.sentence_id, uuid4().hex, kind, resume_lesson)
         self.ticket = ticket
         public = ApprovedSentence.model_validate(sentence.model_dump(exclude={"audio"}))
         if not self.state.capabilities.visuals:
@@ -207,19 +208,30 @@ class LectureConnection:
                                           stream_id=ticket.stream_id,
                                           last_chunk_sequence=len(chunks) - 1), context)
 
-    async def answer(self, audio: bytes, context: TurnContext) -> None:
+    async def answer(self, question: bytes | str, context: TurnContext,
+                     *, resume_lesson: bool = True) -> None:
         try:
             async with asyncio.timeout(100):
-                result = await self.pipeline.run(audio, self.state.context, context)
+                if isinstance(question, str):
+                    result = await self.pipeline.run_text(question, self.state.context, context)
+                else:
+                    result = await self.pipeline.run(question, self.state.context, context)
             if context is not self.context or context.cancelled.is_set():
                 return
             if len(result.sentences) != 1:
                 raise InputError("Demo expects one checked answer segment")
-            await self.emit("transcript.final", dict(canonical_text=result.transcript,
-                                                      hypothesis_revision=0, final=True), context)
+            if isinstance(question, bytes):
+                await self.emit("transcript.final", dict(canonical_text=result.transcript,
+                                                          hypothesis_revision=0, final=True), context)
             with wave.open(io.BytesIO(result.wav), "rb") as wav:
                 pcm = wav.readframes(wav.getnframes())
-            await self.audio(result.sentences[0], pcm, "answer", context)
+            sentence = result.sentences[0]
+            if (result.outcome == "answered" and sentence.visual_target is None
+                    and len(sentence.evidence_ids) == 1):
+                target = next((segment.visual_target for segment in self.lesson.sentences
+                               if segment.evidence_ids == sentence.evidence_ids), None)
+                sentence = sentence.model_copy(update={"visual_target": target})
+            await self.audio(sentence, pcm, "answer", context, resume_lesson=resume_lesson)
             await self.emit("turn.completed", dict(outcome=result.outcome,
                 restart_sentence_id=self.state.cursor.restart_sentence_id), context)
         except (InputError, ProviderError, TimeoutError) as exc:
@@ -253,7 +265,11 @@ class LectureConnection:
         if kind == "session.resume":
             await self.snapshot()
             return
-        if kind == "speech.start":
+        if kind in {"speech.start", "question.text"}:
+            text = payload["text"].strip() if kind == "question.text" else None
+            if text is not None and not 1 <= len(text) <= 1000:
+                await self.error("invalid_question")
+                return
             if event["turn_id"] in self.turn_ids:
                 await self.error("reused_turn")
                 return
@@ -262,7 +278,11 @@ class LectureConnection:
                 await self.error("session_limit")
                 await self.socket.close(code=1008)
                 return
-            await self.start(event["turn_id"], listening=True)
+            resume_lesson = not self.state.paused
+            context = await self.start(event["turn_id"], listening=True)
+            if text is not None:
+                self.listening = False
+                self.task = asyncio.create_task(self.answer(text, context, resume_lesson=resume_lesson))
             return
         pending_audio = (kind in {"audio.input", "speech.end"} and self.listening
                          and self.context is not None and event["turn_id"] == self.context.turn_id)
@@ -345,7 +365,10 @@ class LectureConnection:
                         "last_completed_sentence_id": ticket.sentence_id,
                         "restart_sentence_id": following,
                         "revision": self.state.cursor.revision + 1}))
-                await self.play()
+                if ticket.resume_lesson:
+                    await self.play()
+                else:
+                    await self.snapshot()
             else:
                 await self.error("playback_not_started")
         else:
