@@ -465,7 +465,9 @@ export class RelayPlayer {
   }
 
   private startQuestion() {
-    if (!['lesson', 'ready', 'answer', 'thinking'].includes(this.state.phase)) return;
+    if (this.pausePending) return;
+    const awaitingPlayback = this.state.phase === 'loading' && this.playRequested;
+    if (!awaitingPlayback && !['lesson', 'ready', 'answer', 'thinking'].includes(this.state.phase)) return;
     const interrupted = this.state.active?.sentence_id ?? null;
     this.stopOutput();
     const turn = crypto.randomUUID();

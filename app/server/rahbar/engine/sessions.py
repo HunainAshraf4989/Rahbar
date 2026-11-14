@@ -279,10 +279,11 @@ class LectureConnection:
                 await self.socket.close(code=1008)
                 return
             resume_lesson = not self.state.paused
-            context = await self.start(event["turn_id"], listening=True)
+            question_context = await self.start(event["turn_id"], listening=True)
             if text is not None:
                 self.listening = False
-                self.task = asyncio.create_task(self.answer(text, context, resume_lesson=resume_lesson))
+                self.task = asyncio.create_task(
+                    self.answer(text, question_context, resume_lesson=resume_lesson))
             return
         pending_audio = (kind in {"audio.input", "speech.end"} and self.listening
                          and self.context is not None and event["turn_id"] == self.context.turn_id)

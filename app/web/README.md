@@ -46,9 +46,13 @@ After completing the lesson, **Replay last segment** is also available.
 ## Production build check
 
 ```powershell
+npm.cmd test
 npm.cmd run build
 npm.cmd run preview
 ```
+
+The player tests use mocked browser APIs to check speech during audio loading,
+late narration events, and pause handling without calling speech providers.
 
 The preview uses the same local API proxy. The build and locally served VAD
 runtime files are written to the ignored `.cache` directory.
