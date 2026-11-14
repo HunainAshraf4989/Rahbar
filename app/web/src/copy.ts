@@ -1,0 +1,68 @@
+import type { Issue, Phase } from './relay';
+
+export const copy = {
+  en: {
+    brand: 'Rahbar', alternate: 'اردو', course: 'Auto Electrician', courses: 'Course', voice: 'Voice lesson',
+    title: 'Relay: purpose and operation', shortTitle: 'Automotive relay',
+    courseDescription: 'Learn how automotive electrical components work through guided voice lessons.',
+    lessonDescription: 'Explore the parts of a relay and follow how it switches a circuit.',
+    open: 'Open lesson', back: 'Back to course', visual: 'Relay diagram', exterior: 'Exterior', cutaway: 'Cutaway',
+    chat: 'Tutor chat', progress: 'Lesson progress', position: 'Segment', of: 'of',
+    lessonMessage: 'Rahbar', chatEmpty: 'Play the lesson or ask about the relay.',
+    ask: 'Ask about the relay', send: 'Send question',
+    play: 'Play lesson', pause: 'Pause', repeat: 'Replay last segment', resume: 'Resume lesson',
+    restart: 'Restart lesson',
+    micOn: 'Enable microphone', micOff: 'Turn microphone off', micStarting: 'Starting microphone',
+    micHint: 'Enable the microphone to ask a question aloud during the lesson.',
+    micReady: 'Speak to interrupt and ask a question.',
+    draft: 'Draft lesson', reconnect: 'Reconnect', diagramUnavailable: 'Diagram unavailable',
+    yourQuestion: 'Your question', tutorAnswer: 'Tutor response',
+    status: {
+      connecting: 'Connecting', disconnected: 'Disconnected', ready: 'Ready to play', loading: 'Preparing audio',
+      lesson: 'Playing lesson', listening: 'Listening', thinking: 'Preparing a response',
+      answer: 'Playing response', complete: 'Narration complete',
+    },
+    issues: {
+      connection: 'Could not connect to the local lesson service. Start the service and reconnect.',
+      preparation: 'The relay narration has not been prepared. Prepare the lesson audio and reconnect.',
+      playback: 'Audio could not play. Check your browser audio settings and try again.',
+      provider: 'The tutor could not complete that request. Resume the lesson or try asking again.',
+      microphone: 'Microphone unavailable. Check your browser permissions and try again.',
+      noSpeech: 'No clear speech detected. Try asking again or resume the lesson.',
+      tooLong: 'The question timed out. Enable the microphone and ask a shorter question.',
+    },
+  },
+  ur: {
+    brand: 'رہبر', alternate: 'English', course: 'آٹو الیکٹریشن', courses: 'کورس', voice: 'صوتی سبق',
+    title: 'ریلے کا مقصد اور طریقۂ کار', shortTitle: 'گاڑی کا ریلے',
+    courseDescription: 'صوتی اسباق کی مدد سے گاڑی کے برقی پرزوں کا طریقۂ کار سیکھیں۔',
+    lessonDescription: 'ریلے کے پرزے دیکھیں اور سمجھیں کہ یہ سرکٹ کو کیسے آن اور آف کرتا ہے۔',
+    open: 'سبق کھولیں', back: 'کورس پر واپس جائیں', visual: 'ریلے کی تصویر', exterior: 'بیرونی منظر', cutaway: 'اندرونی منظر',
+    chat: 'استاد سے گفتگو', progress: 'سبق کی پیش رفت', position: 'حصہ', of: 'از',
+    lessonMessage: 'رہبر', chatEmpty: 'سبق چلائیں یا ریلے کے بارے میں سوال کریں۔',
+    ask: 'ریلے کے بارے میں سوال کریں', send: 'سوال بھیجیں',
+    play: 'سبق چلائیں', pause: 'روکیں', repeat: 'آخری حصہ دوبارہ سنیں', resume: 'سبق جاری رکھیں',
+    restart: 'سبق شروع سے چلائیں',
+    micOn: 'مائیک آن کریں', micOff: 'مائیک بند کریں', micStarting: 'مائیک شروع ہو رہا ہے',
+    micHint: 'سبق کے دوران زبانی سوال پوچھنے کے لیے مائیک آن کریں۔',
+    micReady: 'سبق روک کر سوال پوچھنے کے لیے بولیں۔',
+    draft: 'ابتدائی مسودہ', reconnect: 'دوبارہ جوڑیں', diagramUnavailable: 'تصویر دستیاب نہیں ہے',
+    yourQuestion: 'آپ کا سوال', tutorAnswer: 'استاد کا جواب',
+    status: {
+      connecting: 'رابطہ قائم ہو رہا ہے', disconnected: 'رابطہ منقطع', ready: 'سبق تیار ہے', loading: 'آواز تیار ہو رہی ہے',
+      lesson: 'سبق چل رہا ہے', listening: 'سن رہا ہے', thinking: 'جواب تیار ہو رہا ہے',
+      answer: 'جواب چل رہا ہے', complete: 'بیان مکمل ہو گیا',
+    },
+    issues: {
+      connection: 'سبق کی مقامی سروس سے رابطہ نہیں ہو سکا۔ سروس شروع کر کے دوبارہ جوڑیں۔',
+      preparation: 'ریلے کے سبق کی آواز تیار نہیں ہے۔ آواز تیار کر کے دوبارہ جوڑیں۔',
+      playback: 'آواز نہیں چل سکی۔ براؤزر کی آڈیو ترتیبات دیکھ کر دوبارہ کوشش کریں۔',
+      provider: 'سوال پر کارروائی مکمل نہیں ہو سکی۔ سبق جاری رکھیں یا دوبارہ سوال کریں۔',
+      microphone: 'مائیک دستیاب نہیں ہے۔ براؤزر کی اجازت دیکھ کر دوبارہ کوشش کریں۔',
+      noSpeech: 'واضح آواز سنائی نہیں دی۔ دوبارہ سوال کریں یا سبق جاری رکھیں۔',
+      tooLong: 'سوال کے لیے وقت ختم ہو گیا۔ مائیک آن کریں اور مختصر سوال پوچھیں۔',
+    },
+  },
+} satisfies Record<string, { status: Record<Phase, string>; issues: Record<Issue, string>; [key: string]: unknown }>;
+
+export type Language = keyof typeof copy;

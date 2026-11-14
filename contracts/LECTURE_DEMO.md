@@ -2,7 +2,7 @@
 
 Protocol: `rahbar.v1`. Content: `relay-demo-v1`.
 
-The development API serves a prepared relay lesson and accepts spoken questions.
+The development API serves a prepared relay lesson and accepts spoken and typed questions.
 It uses ElevenLabs batch STT/TTS and Gemini passage selection. Answers are limited
 to the supplied lesson passages; unsupported questions produce a spoken refusal.
 Lesson text and assets are marked `draft` pending content review.
@@ -153,6 +153,20 @@ instances, not lesson positions.
    `cursor.restart_sentence_id` is null. Narration completion is independent of
    quiz, viva or unit-completion results.
 
+## Typed questions
+
+Send `question.text` with a fresh turn ID and `{"text":"What does the coil do?"}`.
+Text must contain 1–1000 characters after trimming. Stop local playback when
+sending the question. The gateway fences it as a new turn and uses the same
+grounded answer and audio events as a spoken question. Typed input skips speech
+recognition, so it produces no `transcript.final` event. The frontend can show
+the submitted text immediately. An answer backed by one matching lesson passage
+can reuse that passage's exact visual target during playback.
+
+When the question interrupts narration, acknowledge the answer's playback to
+resume the interrupted segment. When the lesson was paused or already complete,
+the gateway sends a paused snapshot after the answer instead.
+
 ## State and failure handling
 
 Accept playback output only for the current epoch, turn and assigned generation.
@@ -178,6 +192,6 @@ Provider failures leave the cursor unchanged and the session paused. Display the
 safe `error` message and allow retry or resume. Missing audio must not be marked
 played. Errors never expose provider response bodies or credentials.
 
-Supported events: session resume, lesson controls, speech start/end, audio input,
+Supported events: session resume, lesson controls, typed questions, speech start/end, audio input,
 turn cancel and playback acknowledgments. Other catalog events return an error.
-Typed questions, viva and authentication are not implemented by these endpoints.
+Viva and authentication are not implemented by these endpoints.

@@ -150,7 +150,13 @@ def test_interrupt_answer_resume_and_stale_ack(prepared, selected, outcome):
             old = player.audio()[-1]
             player.ack(old, "playback.started")
             player.question()
-            answer = player.audio()[-1]
+            events = player.audio()
+            answer = events[-1]
+            approved = next(event["payload"] for event in events if event["type"] == "sentence.approved")
+            if selected:
+                assert approved["visual_target"]["part_id"] == "coil"
+            else:
+                assert approved["visual_target"] is None
             gemini_call = next(r for r in calls if r.url.path.endswith(":generateContent"))
             prompt = json.loads(json.loads(gemini_call.content)["contents"][0]["parts"][0]["text"])
             assert prompt["teaching_context"]["confirmed_sentence_id"] == lesson.sentences[0].sentence_id
@@ -173,6 +179,40 @@ def test_interrupt_answer_resume_and_stale_ack(prepared, selected, outcome):
             assert player.audio()[-1]["payload"]["sentence_id"] == lesson.sentences[1].sentence_id
             assert client.get(f"/dev/lecture/sessions/{sid}").json()["cursor"]["revision"] == 1
     assert len(calls) == 3
+
+
+@pytest.mark.parametrize("playing", [False, True])
+def test_typed_question_skips_stt_and_preserves_playback_intent(prepared, playing):
+    pipeline, lesson, directory, calls, _ = prepared
+    with TestClient(create_app(pipeline, lecture_directory=directory)) as client:
+        sid = session(client)
+        with client.websocket_connect(f"/dev/lecture/sessions/{sid}/events") as ws:
+            player = Player(ws)
+            if playing:
+                player.send("lesson.control", dict(action="play", sentence_id=None))
+                player.ack(player.audio()[-1], "playback.started")
+            turn = uuid4().hex
+            player.send("question.text", dict(text="What does the coil do?"), turn_id=turn)
+            events = player.audio()
+            assert events[0]["type"] == "turn.started"
+            assert events[0]["turn_id"] == turn
+            assert all(event["type"] != "transcript.final" for event in events)
+            approved = next(event["payload"] for event in events if event["type"] == "sentence.approved")
+            assert approved["visual_target"]["view_id"] == "cutaway"
+            assert approved["visual_target"]["part_id"] == "coil"
+            assert player.read()["payload"]["outcome"] == "answered"
+            player.ack(events[-1], "playback.started")
+            player.ack(events[-1])
+            if playing:
+                resumed = player.audio()[-1]
+                assert resumed["payload"]["sentence_id"] == lesson.sentences[0].sentence_id
+            else:
+                snapshot = player.read()
+                assert snapshot["type"] == "session.state"
+                assert snapshot["payload"]["paused"]
+            assert client.get(f"/dev/lecture/sessions/{sid}").json()["cursor"]["revision"] == 0
+    assert len(calls) == 2
+    assert not any(request.url.path.endswith("speech-to-text") for request in calls)
 
 
 def test_provider_failure_preserves_cursor_and_requires_resume(prepared):

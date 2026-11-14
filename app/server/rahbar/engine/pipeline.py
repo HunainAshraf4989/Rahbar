@@ -50,8 +50,15 @@ class Pipeline:
             self.observer(stage, data)
 
     async def run(self, audio: bytes, teaching: TeachingContext, context: TurnContext) -> TurnResult:
+        return await self._run_cancellable(audio, teaching, context)
+
+    async def run_text(self, text: str, teaching: TeachingContext, context: TurnContext) -> TurnResult:
+        return await self._run_cancellable(text, teaching, context)
+
+    async def _run_cancellable(self, question_input: bytes | str, teaching: TeachingContext,
+                               context: TurnContext) -> TurnResult:
         check_cancelled(context)
-        work = asyncio.create_task(self._run(audio, teaching, context))
+        work = asyncio.create_task(self._run(question_input, teaching, context))
         cancelled = asyncio.create_task(context.cancelled.wait())
         try:
             await asyncio.wait({work, cancelled}, return_when=asyncio.FIRST_COMPLETED)
@@ -62,23 +69,31 @@ class Pipeline:
             cancelled.cancel()
             await asyncio.gather(work, cancelled, return_exceptions=True)
 
-    async def _run(self, audio: bytes, teaching: TeachingContext, context: TurnContext) -> TurnResult:
-        validate_wav(audio)
-        timings = {}
+    async def _run(self, question_input: bytes | str, teaching: TeachingContext,
+                   context: TurnContext) -> TurnResult:
+        timings: dict[str, float] = {}
+        providers: list[ProviderMetadata] = []
+        hypothesis_revision = 0
         start = perf_counter()
-        transcript = await self.stt.transcribe_file(audio, context)
-        if not transcript.final or transcript.turn_id != context.turn_id:
-            raise InputError("Invalid final transcript identity")
-        self.observe("stt", transcript.model_dump())
-        timings["stt"] = (perf_counter() - start) * 1000
-        question = self.normalizer.canonicalize(transcript.text, "stt", NORMALIZER_VERSION)
+        if isinstance(question_input, bytes):
+            validate_wav(question_input)
+            transcript = await self.stt.transcribe_file(question_input, context)
+            if not transcript.final or transcript.turn_id != context.turn_id:
+                raise InputError("Invalid final transcript identity")
+            self.observe("stt", transcript.model_dump())
+            timings["stt"] = (perf_counter() - start) * 1000
+            providers.append(transcript.metadata)
+            hypothesis_revision = transcript.hypothesis_revision
+            question = self.normalizer.canonicalize(transcript.text, "stt", NORMALIZER_VERSION)
+        else:
+            question = self.normalizer.canonicalize(question_input, "typed", NORMALIZER_VERSION)
         self.observe("normalization", question.model_dump())
         stage = perf_counter()
         request = RetrievalRequest(
             canonical_text=question.text, course_id=teaching.course_id,
             content_version=teaching.content_version, index_version="dummy-v1",
             unit_id=teaching.unit_id, turn_id=context.turn_id,
-            hypothesis_revision=transcript.hypothesis_revision, final=True,
+            hypothesis_revision=hypothesis_revision, final=True,
         )
         evidence = await self.retrieval.retrieve(request, context)
         if evidence.request != request:
@@ -87,7 +102,6 @@ class Pipeline:
         timings["retrieval"] = (perf_counter() - stage) * 1000
         pcm = bytearray()
         sentences = []
-        providers = [transcript.metadata]
         outcome = "answered"
         release = ReleaseContext(approved_prefix=[], played_prefix=[], required_warning_ids=[],
                                  reviewed_prerequisite_ids=[])
