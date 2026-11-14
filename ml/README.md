@@ -50,6 +50,7 @@ python --version
 
 Note the GPU model, its memory and the free disk space. The steps below need
 Python 3.10 or newer and about 80 GB free while downloading (about 10 GB after).
+They were written for a 12 GB GPU.
 
 ## 2. Setup
 
@@ -94,28 +95,46 @@ inside words, raise `--min-score`.
 ## 4. Trial run
 
 ```
-python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo --out RUNS/trial --max-steps 200 --eval-steps 100
+python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo --method lora --gradient-checkpointing --batch-size 8 --grad-accum 2 --out RUNS/trial --max-steps 200 --eval-steps 100
 ```
 
 This checks memory and speed. If the GPU runs out of memory, halve `--batch-size`
-and double `--grad-accum`; for the larger model also add `--gradient-checkpointing`.
-Use the settings that work for every run that follows.
+and double `--grad-accum`, keeping their product at 16. Use the settings that work
+for every run that follows.
+
+Training all weights of these models needs more than 12 GB: the weights, their
+gradients and the optimiser state of the 809M-parameter turbo model alone come to
+about 13 GB. On a 12 GB GPU every run therefore uses LoRA, which trains small
+added matrices and keeps the original weights fixed. Drop `--method lora
+--gradient-checkpointing` on a larger GPU to train all weights.
 
 ## 5. Experiments
 
+`LORA` below stands for `--method lora --gradient-checkpointing` plus the batch
+settings from the trial run. Every choice in this table is made on `val`.
+
 | Run | Start from | Data | Steps | Scored on |
 |---|---|---|---|---|
+| `lr-1e-4`, `lr-3e-4`, `lr-1e-3` | `openai/whisper-large-v3-turbo` | `train` | 1000 | `val` |
 | `select-turbo` | `openai/whisper-large-v3-turbo` | `train` | 1500 | `val` |
 | `select-large` | `openai/whisper-large-v3` | `train` | 1500 | `val` |
 | `full-seed0`, `full-seed1`, `full-seed2` | the better of the two | `train` | same for all three | `val`, then `test` |
+| `rank-16`, `rank-64`, `rank-128` | the better of the two | `train` | as `full-seed0` | `val` |
 | `heldout-machine` | `full-seed0/best` | `heldout`, published transcripts | same for both | `test` |
 | `heldout-human` | `full-seed0/best` | `heldout`, corrected transcripts | same for both | `test` |
 
-Choosing the base model:
+Choosing the learning rate (repeat with `3e-4` and `1e-3`; `run.json` in each
+folder gives `best_val_wer`):
 
 ```
-python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo --out RUNS/select-turbo --max-steps 1500
-python -m ml.asr.train --root DATA --base openai/whisper-large-v3 --out RUNS/select-large --max-steps 1500
+python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo LORA --lr 1e-4 --out RUNS/lr-1e-4 --max-steps 1000
+```
+
+Choosing the base model, with the learning rate just chosen:
+
+```
+python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo LORA --lr <chosen> --out RUNS/select-turbo --max-steps 1500
+python -m ml.asr.train --root DATA --base openai/whisper-large-v3 LORA --lr <chosen> --out RUNS/select-large --max-steps 1500
 python -m ml.asr.transcribe --root DATA --split val --subsets US-CS --name select-turbo --model RUNS/select-turbo/best
 python -m ml.asr.transcribe --root DATA --split val --subsets US-CS --name select-large --model RUNS/select-large/best
 python -m ml.eval.score --root DATA --split val --systems select-turbo select-large --baseline select-turbo
@@ -124,7 +143,7 @@ python -m ml.eval.score --root DATA --split val --systems select-turbo select-la
 Full fine-tuning, once per seed:
 
 ```
-python -m ml.asr.train --root DATA --base <chosen> --out RUNS/full-seed0 --max-steps 6000 --seed 0
+python -m ml.asr.train --root DATA --base <chosen> LORA --lr <chosen> --out RUNS/full-seed0 --max-steps 6000 --seed 0
 ```
 
 Running a command again resumes it from its last checkpoint. `RUNS/<name>/run.json`
@@ -136,15 +155,15 @@ falling at the last step, repeat with more steps.
 The held-out pair differs only in transcripts:
 
 ```
-python -m ml.asr.train --root DATA --base RUNS/full-seed0/best --out RUNS/heldout-machine --train-split heldout --max-steps <n>
-python -m ml.asr.train --root DATA --base RUNS/full-seed0/best --out RUNS/heldout-human --train-split heldout --labels corrected.jsonl --max-steps <n>
+python -m ml.asr.train --root DATA --base RUNS/full-seed0/best LORA --lr <chosen> --out RUNS/heldout-machine --train-split heldout --max-steps <n>
+python -m ml.asr.train --root DATA --base RUNS/full-seed0/best LORA --lr <chosen> --out RUNS/heldout-human --train-split heldout --labels corrected.jsonl --max-steps <n>
 ```
 
 `corrected.jsonl` has one `{"id": ..., "text": ...}` per line. Clips without a
 corrected transcript are left out, so run the first command with the same file
 restricted to machine transcripts if any are missing.
 
-Other conditions use the same script: `--method lora --lora-r 32`, `--train-hours 25`
+Other conditions use the same script: `--lora-r 64` for the rank, `--train-hours 25`
 for a random subset, `--subsets US-CS US-Std US-EngPk` to add the monolingual data,
 `--whole-clips-only` to leave out the parts made by `split_long`.
 
