@@ -107,7 +107,10 @@ class Collator:
 
 
 def build_model(args: argparse.Namespace) -> WhisperForConditionalGeneration:
-    model = WhisperForConditionalGeneration.from_pretrained(args.base)
+    # float32 weights: transformers 5 would otherwise load the fp16 checkpoint as fp16, and
+    # generation during validation then fails (float32 features vs fp16 weights). The
+    # fp16=True training argument still runs the maths in mixed precision.
+    model = WhisperForConditionalGeneration.from_pretrained(args.base, dtype=torch.float32)
     model.generation_config.language = args.language
     model.generation_config.task = "transcribe"
     model.generation_config.forced_decoder_ids = None
