@@ -26,7 +26,7 @@ All splits are fixed by `data.py manifest` with seed 0 on a pinned dataset revis
 | `train` | corpus | 72.7 | Training |
 | `val` | corpus | 8.0 | Choosing checkpoints and settings |
 | `heldout` | corpus | 5.0 | Kept out of training; later fine-tuned on with machine or human-corrected transcripts |
-| `test` | benchmark | 5.6 | Final results only |
+| `test` | benchmark | 6.0 | Final results only |
 | `excluded` | corpus | 1.3 | Shares text or audio with the benchmark |
 
 - **Test** is the benchmark, scored against its `ground_truth` field. It is never
@@ -40,6 +40,9 @@ All splits are fixed by `data.py manifest` with seed 0 on a pinned dataset revis
 - The dataset has no recording identifier, and the benchmark comes from the same
   programmes as the corpus, so speakers are not guaranteed disjoint between splits.
 - Duplicate rows, rows without audio and rows with empty text are dropped.
+- The benchmark has folders named both `PODCAST` and `Podcast`, each with its own
+  transcript file. Both are read; they are stored as `.case1` and `.case2` files so
+  that neither overwrites the other on a disk that ignores letter case.
 
 ## 1. Machine check
 
@@ -72,7 +75,7 @@ python -m ml.asr.data download --root DATA
 python -m ml.asr.data manifest --root DATA
 ```
 
-`manifest` prints `split_fingerprint`. It must be `f31207c8c8ca8f04`; any other
+`manifest` prints `split_fingerprint`. It must be `93e5ddfff5a87f3c`; any other
 value means the splits differ from the ones above, so stop and find out why.
 
 ```

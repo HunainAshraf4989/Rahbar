@@ -60,11 +60,60 @@ def is_transcript(name: str) -> bool:
     return name.endswith(".jsonl") and "paralinguistic" not in name
 
 
-def download(root: Path, parts: list[str], limit: int | None) -> None:
-    from huggingface_hub import snapshot_download
+def local_names(files: list[str]) -> dict[str, str]:
+    """Where each published file is stored under raw/.
+
+    The dataset has folders whose names differ only in letter case (PODCAST and
+    Podcast), each with its own transcript file. On a case-insensitive disk one
+    would overwrite the other, so every file in such a clash gets a numbered name.
+    """
+    by_folded: dict[str, list[str]] = defaultdict(list)
+    for name in files:
+        by_folded[name.lower()].append(name)
+    names = {name: name for name in files}
+    for clash in by_folded.values():
+        if len(clash) > 1:
+            for number, name in enumerate(sorted(clash), 1):
+                path = Path(name)
+                names[name] = path.with_name(f"{path.stem}.case{number}{path.suffix}").as_posix()
+    return names
+
+
+def fetch(raw: Path, name: str, local: str) -> str | None:
+    """Download one file unless it is already there; return an error message on failure."""
+    import shutil
+    import tempfile
+    import time
+
+    from huggingface_hub import hf_hub_download
+
+    target = raw / local
+    if target.exists() and target.stat().st_size > 0:
+        return None
+    error: Exception | None = None
+    for attempt in range(5):
+        try:
+            if local == name:
+                hf_hub_download(REPO, name, repo_type="dataset", revision=REVISION, local_dir=raw)
+            else:
+                with tempfile.TemporaryDirectory(dir=raw) as scratch:
+                    got = hf_hub_download(REPO, name, repo_type="dataset", revision=REVISION,
+                                          local_dir=scratch)
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.move(got, target)
+            return None
+        except Exception as problem:  # network errors vary; retry them all
+            error = problem
+            time.sleep(2 * (attempt + 1))
+    return f"{name}: {error}"
+
+
+def download(root: Path, parts: list[str], limit: int | None, workers: int = 8) -> None:
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
     raw = root / "raw"
     files = repo_files(raw)
+    names = local_names(files)
     wanted = [f for f in files if is_transcript(f)]  # every subset: needed for the overlap check
     audio = [f for f in files
              if f.lower().endswith(".wav") and any(f.startswith(p + "/") for p in parts)]
@@ -73,20 +122,34 @@ def download(root: Path, parts: list[str], limit: int | None) -> None:
         for f in sorted(audio):
             per_folder[f.rsplit("/", 1)[0]].append(f)
         audio = [f for group in per_folder.values() for f in group[:limit]]
-    snapshot_download(REPO, repo_type="dataset", revision=REVISION, local_dir=raw,
-                      allow_patterns=wanted + audio)
-    print(f"downloaded {len(wanted)} transcript files and {len(audio)} clips to {raw}")
+    todo = wanted + audio
+    failed = []
+    with ThreadPoolExecutor(workers) as pool:
+        jobs = [pool.submit(fetch, raw, name, names[name]) for name in todo]
+        for done, job in enumerate(as_completed(jobs), 1):
+            if job.result():
+                failed.append(job.result())
+            if done % 500 == 0 or done == len(todo):
+                print(f"{done}/{len(todo)} files, {len(failed)} failed", flush=True)
+    if failed:
+        for line in failed[:20]:
+            print(line)
+        raise SystemExit(f"{len(failed)} files failed; run the download step again")
+    print(f"{len(wanted)} transcript files and {len(audio)} clips are in {raw}")
 
 
 def load_rows(raw: Path) -> tuple[list[dict], Counter]:
     """One record per published clip that has both a transcript row and an audio file."""
     files = repo_files(raw)
+    names = local_names(files)
     audio = {f.lower(): f for f in files if f.lower().endswith(".wav")}
     dropped: Counter = Counter()
     rows, seen = [], set()
     for name in sorted(f for f in files if is_transcript(f)):
-        path = raw / name
+        path = raw / names[name]
         if not path.exists():
+            if names[name] != name:
+                raise SystemExit(f"{names[name]} is missing; run the download step again")
             continue
         part, subset, length, category = name.split("/")[:4]
         subset = subset.replace("benchmark-", "")
@@ -207,6 +270,8 @@ def fingerprint(rows: list[dict]) -> str:
 
 def build_manifest(root: Path, fraction: float, heldout_hours: float, seed: int) -> None:
     rows, dropped = load_rows(root / "raw")
+    if len({r["id"] for r in rows}) != len(rows):
+        raise SystemExit("two clips share an id; the manifest would be ambiguous")
     corpus = [r for r in rows if r["part"] == "corpus"]
     benchmark = [r for r in rows if r["part"] == "benchmark"]
     for row in benchmark:

@@ -1,4 +1,13 @@
-from ml.asr.data import assign_heldout, assign_validation, fingerprint, mark_benchmark_overlap
+import json
+
+from ml.asr.data import (
+    assign_heldout,
+    assign_validation,
+    fingerprint,
+    load_rows,
+    local_names,
+    mark_benchmark_overlap,
+)
 
 SENTENCE = "یہ ایک لمبا جملہ ہے جس میں کافی سارے الفاظ موجود ہیں اور relay بھی ہے"
 
@@ -69,3 +78,29 @@ def test_heldout_is_stratified_random_and_reproducible():
     other = heldout_rows()
     assign_heldout(other, hours=0.2, seed=1)
     assert fingerprint(other) != fingerprint(rows)
+
+
+def test_folders_that_differ_only_in_case_are_both_read(tmp_path):
+    folders = ["benchmark/US-benchmark-CS/long/PODCAST", "benchmark/US-benchmark-CS/long/Podcast"]
+    files = [f"{folder}/clean_transcription.jsonl" for folder in folders]
+    files += [f"{folders[0]}/audio/SPEAKER_000_PODCAST_0001.WAV",
+              f"{folders[1]}/audio/SPEAKER_002_Podcast_0180.wav",
+              "corpus/US-CS/short/news/news_final_transcription.jsonl"]
+    names = local_names(files)
+    assert names[files[0]].endswith("PODCAST/clean_transcription.case1.jsonl")
+    assert names[files[1]].endswith("Podcast/clean_transcription.case2.jsonl")
+    assert len({n.lower() for n in names.values()}) == len(files)
+    assert names[files[4]] == files[4]
+
+    (tmp_path / "_files.txt").write_text(chr(10).join(files), encoding="utf-8")
+    clips = ("SPEAKER_000_PODCAST_0001.WAV", "SPEAKER_002_Podcast_0180.wav")
+    for name, clip in zip(files[:2], clips):
+        path = tmp_path / names[name]
+        path.parent.mkdir(parents=True, exist_ok=True)
+        record = {"Audio_Clip": clip, "Speaker_id": "S", "Duration_seconds": 5,
+                  "ground_truth": "یہ podcast ہے", "Transcription": "یہ podcast ہے"}
+        path.write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+    rows, dropped = load_rows(tmp_path)
+    assert sorted(r["id"].rsplit("/", 1)[1] for r in rows) == [
+        "SPEAKER_000_PODCAST_0001", "SPEAKER_002_Podcast_0180"]
+    assert {r["category"] for r in rows} == {"podcast"} and not dropped
