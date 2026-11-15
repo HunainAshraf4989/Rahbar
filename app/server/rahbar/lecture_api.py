@@ -1,5 +1,6 @@
 """Local-only lecture endpoints; accounts remain the platform owner's boundary."""
 
+import asyncio
 import hashlib
 from pathlib import Path
 
@@ -15,7 +16,8 @@ from rahbar.engine.sessions import LectureConnection, SessionStore
 
 
 class LectureGateway:
-    def __init__(self, root: Path, directory: Path, pipeline: Pipeline) -> None:
+    def __init__(self, root: Path, directory: Path, pipeline: Pipeline,
+                 store: SessionStore | None = None) -> None:
         self.directory, self.pipeline = directory, pipeline
         self.asset = relay_asset(root)
         expected = relay_lesson(self.asset, root)
@@ -38,12 +40,12 @@ class LectureGateway:
             self.audio_files[name] = path
         self.asset_files = {Path(url).name: root / "asset_gen/out" / Path(url).name
                             for view in self.asset.views for url in (view.image, view.overlay)}
-        self.store = SessionStore(directory / "sessions.sqlite3")
+        self.store = store if store is not None else SessionStore(directory / "sessions.sqlite3")
         self.connections: dict[str, LectureConnection] = {}
 
-    def state(self, session_id: str) -> SessionState:
+    async def state(self, session_id: str) -> SessionState:
         try:
-            state = self.store.get(session_id)
+            state = await asyncio.to_thread(self.store.get, session_id)
         except KeyError:
             raise HTTPException(404, "session_not_found") from None
         if state.cursor.lesson_version != self.lesson.lesson_version:
@@ -90,17 +92,17 @@ def register_lecture_routes(app: FastAPI) -> None:
         if (selection.course_id, selection.content_version,
                 selection.unit_id, selection.lesson_id) != expected:
             raise HTTPException(409, "lesson_selection_mismatch")
-        return service.store.create(service.lesson, selection.visuals)
+        return await asyncio.to_thread(service.store.create, service.lesson, selection.visuals)
 
     @router.get("/dev/lecture/sessions/{session_id}", response_model=SessionState)
     async def session(session_id: str, request: Request) -> SessionState:
-        return gateway(request).state(session_id)
+        return await gateway(request).state(session_id)
 
     @router.websocket("/dev/lecture/sessions/{session_id}/events")
     async def events(socket: WebSocket, session_id: str) -> None:
         try:
             service = gateway(socket)
-            service.state(session_id)
+            await service.state(session_id)
         except HTTPException:
             await socket.close(code=1008)
             return
@@ -109,7 +111,7 @@ def register_lecture_routes(app: FastAPI) -> None:
         if previous is not None:
             await previous.close()
             await previous.socket.close(code=1000)
-        connection = LectureConnection(socket, service.state(session_id), service.store,
+        connection = LectureConnection(socket, await service.state(session_id), service.store,
                                        service.lesson, service.directory, service.pipeline)
         service.connections[session_id] = connection
         try:
