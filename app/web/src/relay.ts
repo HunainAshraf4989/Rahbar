@@ -15,7 +15,8 @@ type Payload<K extends Outgoing['type']> = Extract<Outgoing, {type: K}>['payload
 
 export type Phase = 'connecting' | 'disconnected' | 'ready' | 'loading' | 'lesson'
   | 'listening' | 'thinking' | 'answer' | 'complete';
-export type Issue = 'connection' | 'preparation' | 'playback' | 'provider' | 'microphone' | 'noSpeech' | 'tooLong';
+export type Issue = 'connection' | 'preparation' | 'playback' | 'provider'
+  | 'microphone' | 'noSpeech' | 'tooLong' | 'quota_exhausted' | 'authentication' | 'throttled' | 'timeout';
 
 export type ChatMessage = {
   id: string;
@@ -33,6 +34,7 @@ export interface PlayerState {
   completed?: number;
   messages: ChatMessage[];
   playingMessageId?: string;
+  waitingToContinue?: boolean;
   issue?: Issue;
   microphone: 'off' | 'starting' | 'on';
 }
@@ -91,7 +93,7 @@ export class RelayPlayer {
   async connect(mode: 'resume' | 'restart' = 'resume') {
     this.close();
     if (mode === 'restart') this.primeMedia();
-    this.set({ phase: 'connecting', issue: undefined, session: undefined, completed: undefined });
+    this.set({ phase: 'connecting', issue: undefined, session: undefined, completed: undefined, waitingToContinue: false });
     const abort = new AbortController();
     this.abort = abort;
     const timeout = setTimeout(() => abort.abort(), 10_000);
@@ -217,7 +219,7 @@ export class RelayPlayer {
   }
 
   private startPlayback(action: 'play' | 'repeat') {
-    this.set({ phase: 'loading', issue: undefined });
+    this.set({ phase: 'loading', issue: undefined, waitingToContinue: false });
     this.playRequested = true;
     this.send('lesson.control', { action, sentence_id: null });
   }
@@ -296,7 +298,8 @@ export class RelayPlayer {
     }
 
     if (event.type === 'error') {
-      if (this.pausePending && event.payload.code === 'stale_generation') {
+      const code = event.payload.code;
+      if (this.pausePending && code === 'stale_generation') {
         this.generation = event.generation;
         this.sendPause();
         return;
@@ -306,7 +309,9 @@ export class RelayPlayer {
       this.resetTurn();
       this.pausePending = this.playRequested = false;
       this.pauseGeneration = undefined;
-      this.set({ phase: this.state.session?.cursor.restart_sentence_id ? 'ready' : 'complete', issue: 'provider' });
+      const issue = code === 'quota_exhausted' || code === 'authentication' || code === 'throttled' || code === 'timeout'
+        ? code : 'provider';
+      this.set({ phase: this.state.session?.cursor.restart_sentence_id ? 'ready' : 'complete', issue });
       return;
     }
     if (this.pausePending || this.pendingTurn || !this.turn
@@ -390,21 +395,23 @@ export class RelayPlayer {
     this.media.onended = () => {
       if (this.mediaUrl !== url || !started) return;
       this.stopOutput();
-      this.set({ phase: 'loading' });
+      this.set({ phase: 'loading', waitingToContinue: isAnswer });
       this.send('playback.ended', { ...identity, client_monotonic_ms: performance.now(), interrupted_sample: null }, turn);
+      // Keep the reply acknowledgment and fence any automatic lesson turn until Continue.
+      if (isAnswer) this.pause();
     };
     this.media.onerror = () => { if (this.mediaUrl === url) this.failPlayback(); };
     void this.media.play().catch(() => { if (this.mediaUrl === url) this.failPlayback(); });
   }
 
-  async toggleMic() {
+  async toggleMic(singleQuestion = false) {
     if (this.state.microphone !== 'off') {
       this.stopMic();
       if (this.state.phase === 'listening') this.pause();
       return;
     }
     const request = ++this.micRequest;
-    if (this.state.phase === 'ready') this.primeMedia();
+    if (this.state.phase === 'ready' || this.state.phase === 'complete') this.primeMedia();
     this.set({ microphone: 'starting', issue: undefined });
     let vad: MicVAD | undefined;
     try {
@@ -428,8 +435,16 @@ export class RelayPlayer {
           return stream;
         },
         onSpeechStart: () => { if (request === this.micRequest) this.startQuestion(); },
-        onSpeechEnd: audio => { if (request === this.micRequest) this.submitQuestion(audio); },
-        onVADMisfire: () => { if (request === this.micRequest) this.cancelQuestion('noSpeech'); },
+        onSpeechEnd: audio => {
+          if (request !== this.micRequest) return;
+          this.submitQuestion(audio);
+          if (singleQuestion) this.stopMic();
+        },
+        onVADMisfire: () => {
+          if (request !== this.micRequest) return;
+          this.cancelQuestion('noSpeech');
+          if (singleQuestion) this.stopMic();
+        },
       });
       if (request !== this.micRequest) {
         await vad.destroy().catch(() => {});
@@ -467,7 +482,7 @@ export class RelayPlayer {
   private startQuestion() {
     if (this.pausePending) return;
     const awaitingPlayback = this.state.phase === 'loading' && this.playRequested;
-    if (!awaitingPlayback && !['lesson', 'ready', 'answer', 'thinking'].includes(this.state.phase)) return;
+    if (!awaitingPlayback && !['lesson', 'ready', 'complete', 'answer', 'thinking'].includes(this.state.phase)) return;
     const interrupted = this.state.active?.sentence_id ?? null;
     this.stopOutput();
     const turn = crypto.randomUUID();

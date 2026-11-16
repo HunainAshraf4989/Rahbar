@@ -29,16 +29,9 @@ If you received prepared audio from another machine and the service reports
 the raw diagram bytes. A fresh Windows checkout created with
 `git -c core.autocrlf=false clone <repo-url>` preserves the committed SVG bytes.
 
-In the lesson, choose **Play lesson**. To ask aloud, enable the microphone
-once, grant browser permission, then speak during playback. The browser
-stops the current audio as soon as it detects speech. The server resumes the
-interrupted segment after the answer finishes. Reconnect loads the server's
-saved position and waits for you to press play.
-
-Type a question in the chat composer to use the same tutor without the
-microphone. Narration, submitted questions, and spoken answers appear in the
-conversation. The infographic canvas follows the current audio. Chat history
-stays in the open lesson and clears when you start a new lesson session.
+Open the relay lesson from **My Courses** and choose **Play lesson**.
+Narration, submitted questions, and answers appear in the conversation.
+Reconnect loads the saved position and waits for you to press play.
 
 **Restart lesson** starts a fresh session and plays from the first segment.
 After completing the lesson, **Replay last segment** is also available.
@@ -56,3 +49,34 @@ late narration events, and pause handling without calling speech providers.
 
 The preview uses the same local API proxy. The build and locally served VAD
 runtime files are written to the ignored `.cache` directory.
+
+## Platform preview
+
+The dashboard requires an authenticated account. The lesson quiz list opens
+each quiz separately. Quiz results and practice progress use browser session
+storage for now.
+
+For accounts, install `app/server/requirements-platform.txt` in the server
+environment and use the additive `rahbar.platform_api:create_platform_app`
+Uvicorn factory. Set `RAHBAR_DATABASE_URL` in the ignored repository-root
+`.env.local` to a PostgreSQL database with the Rahbar schema applied. Set
+`RAHBAR_WEB_ORIGIN` to the exact frontend origin if it differs from
+`http://127.0.0.1:4173`. The auth module uses scrypt, revocable HTTP-only
+cookies, origin checks, and local rate limits. Review email verification,
+password recovery, shared throttling, and the deployment password blocklist
+before opening the service to external users.
+
+Use the chat composer to type a question or select its microphone to ask aloud.
+The microphone pauses narration, and a short pause sends the recording through
+the existing speech pipeline. The composer shows when the microphone is
+listening, when it detects speech, and when the tutor is preparing a reply.
+After the reply, choose **Continue lesson** to resume from the existing cursor.
+Advancement to the next segment requires backend support.
+
+Select the username in the sidebar to open profile settings. Changing a password
+requires the current password and revokes previous sessions. New passwords need
+eight or more characters, an uppercase letter, and a special character.
+
+Drag the diagram or use the rotation buttons while the tutor speaks. Each
+rendered angle uses its matching outline, so a part is highlighted only when
+visible from that angle.
