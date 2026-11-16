@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 const target = process.env.RAHBAR_WEB_API ?? 'http://127.0.0.1:8000';
-const proxy = { '/dev': { target, ws: true } };
+const proxy = { '/dev': { target, ws: true }, '/api/v1': { target } };
 const publicDir = '.cache/web-public';
 const assets = new Map([
   ['vad.worklet.bundle.min.js', { package: '@ricky0123/vad-web', type: 'text/javascript' }],
