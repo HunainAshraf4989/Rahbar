@@ -96,10 +96,19 @@ class LectureConnection:
         self.turn_ids: set[str] = set()
         self.send_lock = asyncio.Lock()
         self.closed = False
+        self.save_lock = asyncio.Lock()
 
-    def save(self, **changes: Any) -> None:
-        self.state = self.state.model_copy(update=changes)
-        self.store.save(self.state)
+    async def save(self, **changes: Any) -> None:
+        async with self.save_lock:
+            state = self.state.model_copy(update=changes)
+            work = asyncio.create_task(asyncio.to_thread(self.store.save, state))
+            try:
+                await asyncio.shield(work)
+            except asyncio.CancelledError:
+                await work
+                self.state = state
+                raise
+            self.state = state
 
     def cancel(self) -> None:
         if self.context is not None:
@@ -119,7 +128,7 @@ class LectureConnection:
         self.cancel()
         if self.task is not None:
             await asyncio.gather(self.task, return_exceptions=True)
-        self.save(paused=True)
+        await self.save(paused=True)
 
     async def emit(self, kind: str, payload: dict[str, Any],
                    context: TurnContext | None = None) -> None:
@@ -142,7 +151,7 @@ class LectureConnection:
                 if self.context is not None:
                     self.context.cancelled.set()
                 self.ticket = None
-                self.save(paused=True)
+                await self.save(paused=True)
                 raise asyncio.CancelledError from None
 
     async def snapshot(self) -> None:
@@ -155,7 +164,7 @@ class LectureConnection:
 
     async def start(self, turn_id: str, *, listening: bool) -> TurnContext:
         self.cancel()
-        self.save(generation=self.state.generation + 1, paused=listening)
+        await self.save(generation=self.state.generation + 1, paused=listening)
         self.context = TurnContext(self.state.session_id, turn_id, self.state.generation,
                                    self.state.connection_epoch, asyncio.Event())
         self.listening = listening
@@ -165,7 +174,7 @@ class LectureConnection:
     async def play(self) -> None:
         sentence_id = self.state.cursor.restart_sentence_id
         if sentence_id is None:
-            self.save(paused=True)
+            await self.save(paused=True)
             await self.snapshot()
             return
         sentence = next(s for s in self.lesson.sentences if s.sentence_id == sentence_id)
@@ -182,7 +191,7 @@ class LectureConnection:
         except (OSError, ValueError, wave.Error, EOFError):
             if context is self.context and not context.cancelled.is_set():
                 self.cancel()
-                self.save(paused=True)
+                await self.save(paused=True)
                 await self.error("lecture_audio_unavailable")
 
     async def audio(self, sentence: ApprovedSentence, pcm: bytes,
@@ -238,7 +247,7 @@ class LectureConnection:
             if context is self.context and not context.cancelled.is_set():
                 code = exc.failure.code if isinstance(exc, ProviderError) else "turn_failed"
                 self.ticket = None
-                self.save(paused=True)
+                await self.save(paused=True)
                 await self.error(code)
                 await self.emit("turn.completed", dict(outcome="failed",
                     restart_sentence_id=self.state.cursor.restart_sentence_id), context)
@@ -294,7 +303,7 @@ class LectureConnection:
             action = payload["action"]
             if action == "pause":
                 self.cancel()
-                self.save(paused=True)
+                await self.save(paused=True)
                 await self.snapshot()
                 return
             requested = payload["sentence_id"]
@@ -305,7 +314,7 @@ class LectureConnection:
                 await self.error("invalid_lesson_position")
                 return
             if action == "repeat" and self.state.cursor.restart_sentence_id is None:
-                self.save(cursor=self.state.cursor.model_copy(update={
+                await self.save(cursor=self.state.cursor.model_copy(update={
                     "restart_sentence_id": current, "revision": self.state.cursor.revision + 1}))
             await self.play()
             return
@@ -315,7 +324,7 @@ class LectureConnection:
             return
         if kind == "turn.cancel":
             self.cancel()
-            self.save(paused=True)
+            await self.save(paused=True)
             await self.snapshot()
         elif kind == "audio.input":
             if not self.listening or payload["chunk_sequence"] != self.input_chunks:
@@ -344,14 +353,14 @@ class LectureConnection:
                 return
             if kind == "playback.interrupted":
                 self.cancel()
-                self.save(paused=True)
+                await self.save(paused=True)
                 await self.snapshot()
             elif kind == "playback.started":
                 ticket.started = True
                 if ticket.kind == "lesson":
                     sentence = next(s for s in self.lesson.sentences
                                     if s.sentence_id == ticket.sentence_id)
-                    self.save(context=self.state.context.model_copy(update={
+                    await self.save(context=self.state.context.model_copy(update={
                         "confirmed_sentence_id": sentence.sentence_id,
                         "visual_context": (sentence.visual_target
                                            if self.state.capabilities.visuals else None)}))
@@ -362,7 +371,7 @@ class LectureConnection:
                                  if s.sentence_id == ticket.sentence_id)
                     following = (self.lesson.sentences[index + 1].sentence_id
                                  if index + 1 < len(self.lesson.sentences) else None)
-                    self.save(cursor=self.state.cursor.model_copy(update={
+                    await self.save(cursor=self.state.cursor.model_copy(update={
                         "last_completed_sentence_id": ticket.sentence_id,
                         "restart_sentence_id": following,
                         "revision": self.state.cursor.revision + 1}))
@@ -376,7 +385,7 @@ class LectureConnection:
             await self.error("unsupported_event")
 
     async def run(self) -> None:
-        self.save(connection_epoch=uuid4().hex, generation=self.state.generation + 1, paused=True)
+        await self.save(connection_epoch=uuid4().hex, generation=self.state.generation + 1, paused=True)
         await self.snapshot()
         try:
             while True:
@@ -387,7 +396,7 @@ class LectureConnection:
                     await self.receive(json.loads(text))
                 except (ValueError, TypeError, KeyError):
                     self.cancel()
-                    self.save(paused=True)
+                    await self.save(paused=True)
                     await self.error("invalid_event")
         except WebSocketDisconnect:
             pass

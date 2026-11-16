@@ -7,7 +7,45 @@ It uses ElevenLabs batch STT/TTS and Gemini passage selection. Answers are limit
 to the supplied lesson passages; unsupported questions produce a spoken refusal.
 Lesson text and assets are marked `draft` pending content review.
 
-## Running the service
+## Supabase runtime
+
+With `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL` (or `SUPABASE_URL`), and
+`SUPABASE_SECRET_KEY` configured, the API automatically uses Supabase PostgreSQL
+for sessions and private Storage for the imported lesson. The central loader reads
+`.env` and `.env.local` from the working directory; `[YOUR-PASSWORD]` in the URI is
+replaced with the encoded `SUPABASE_DB_PASSWORD`. Use the dashboard's Session pooler
+URI for IPv4 connectivity. The publishable key is not needed by the backend.
+
+Install the project dependencies, then run from the project directory containing
+these configuration files:
+
+```bash
+PYTHONPATH=app/server python -m uvicorn rahbar.api:create_app --factory --host 127.0.0.1 --port 8000
+npm --prefix app/web run dev
+```
+
+`GET /health/live` reports `storage_backend: "supabase"`. A partial cloud
+configuration or unavailable database fails startup instead of silently using
+SQLite. Without any Supabase configuration, local development continues to use
+the prepared local lesson and SQLite.
+
+The imported course manifest identifies the private content bundle. Startup
+downloads missing/corrupt files into `.cache/supabase-runtime`, verifies SHA-256,
+and uses this cache for audio playback and the existing `/dev/assets` routes.
+Backend credentials and private Storage URLs are never sent to the browser.
+Session cursor, playback intent, generation and connection epoch persist in the
+existing `rahbar` tables. Stale generation/epoch/cursor writes are rejected;
+database operations run off the event loop. Reconnect restores a paused session.
+
+This remains the single-worker demo gateway. New sessions use anonymous demo
+principals; account authentication and multi-worker coordination are not provided
+by this integration. Existing imported demo sessions are supported.
+
+PostgreSQL integration tests require an empty disposable database named
+`rahbar_runtime_test` and `RAHBAR_TEST_POSTGRES_DSN` pointing to it. The test creates
+and removes its own `rahbar` schema; never point it at a shared database.
+
+## Local prepared-lesson setup
 
 Run from the repository root with the project dependencies installed:
 

@@ -1,10 +1,46 @@
 """The only credential loader. Never log environment values or validation inputs."""
 
 import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
+from urllib.parse import quote, urlsplit
 
 from dotenv import dotenv_values
+
+
+@dataclass(frozen=True)
+class SupabaseSettings:
+    database_url: str = field(repr=False)
+    url: str = field(default="", repr=False)
+    secret_key: str = field(default="", repr=False)
+
+
+def load_supabase_settings(root: Path) -> SupabaseSettings:
+    """Load migration credentials centrally; never expose values in errors or logs."""
+    values = {**dotenv_values(root / ".env"), **dotenv_values(root / ".env.local"),
+              **os.environ}
+
+    def first(*names: str) -> str:
+        return next((str(values[name]).strip() for name in names if values.get(name)), "")
+
+    database_url = first("RAHBAR_DATABASE_URL", "DATABASE_URL", "SUPABASE_DB_URL",
+                         "POSTGRES_URL", "DIRECT_URL", "POSTGRES_URL_NON_POOLING")
+    password = first("SUPABASE_DB_PASSWORD", "DATABASE_PASSWORD", "DB_PASSWORD",
+                     "POSTGRES_PASSWORD")
+    url = first("SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL", "VITE_SUPABASE_URL")
+    if not database_url and password:
+        host = urlsplit(url).hostname or ""
+        if re.fullmatch(r"[a-z0-9]+\.supabase\.co", host):
+            database_url = f"postgresql://postgres:{quote(password, safe='')}@db.{host}:5432/postgres"
+    for placeholder in ("[YOUR-PASSWORD]", "[YOUR_PASSWORD]", "<PASSWORD>"):
+        if placeholder in database_url and password:
+            database_url = database_url.replace(placeholder, quote(password, safe=""))
+    if database_url and not database_url.startswith(("postgresql://", "postgres://")):
+        raise ValueError("Expected a PostgreSQL connection URI in DATABASE_URL")
+    return SupabaseSettings(database_url=database_url,
+        url=url,
+        secret_key=first("SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_SERVICE_KEY"))
 
 
 @dataclass(frozen=True)
