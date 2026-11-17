@@ -32,7 +32,7 @@ def whisper(args: argparse.Namespace) -> Transcriber:
     from transformers import WhisperForConditionalGeneration, WhisperProcessor, pipeline
 
     dtype = torch.float16 if args.device == "cuda" else torch.float32
-    model = WhisperForConditionalGeneration.from_pretrained(args.model, torch_dtype=dtype)
+    model = WhisperForConditionalGeneration.from_pretrained(args.model, dtype=dtype)
     if args.adapter:
         from peft import PeftModel
 
@@ -40,7 +40,7 @@ def whisper(args: argparse.Namespace) -> Transcriber:
     processor = WhisperProcessor.from_pretrained(args.model)
     pipe = pipeline("automatic-speech-recognition", model=model, tokenizer=processor.tokenizer,
                     feature_extractor=processor.feature_extractor, device=args.device,
-                    torch_dtype=dtype, chunk_length_s=30)
+                    dtype=dtype, chunk_length_s=30)
     options = {"task": "transcribe"}
     if args.language != "auto":
         options["language"] = args.language
@@ -56,7 +56,7 @@ def mms(args: argparse.Namespace) -> Transcriber:
     from transformers import AutoProcessor, Wav2Vec2ForCTC
 
     processor = AutoProcessor.from_pretrained(args.model)
-    model = Wav2Vec2ForCTC.from_pretrained(args.model).to(args.device).eval()
+    model = Wav2Vec2ForCTC.from_pretrained(args.model, dtype=torch.float32).to(args.device).eval()
     processor.tokenizer.set_target_lang("urd-script_arabic")
     model.load_adapter("urd-script_arabic")
 
@@ -73,11 +73,13 @@ def seamless(args: argparse.Namespace) -> Transcriber:
     from transformers import AutoProcessor, SeamlessM4Tv2ForSpeechToText
 
     processor = AutoProcessor.from_pretrained(args.model)
-    model = SeamlessM4Tv2ForSpeechToText.from_pretrained(args.model).to(args.device).eval()
+    dtype = torch.float16 if args.device == "cuda" else torch.float32
+    model = SeamlessM4Tv2ForSpeechToText.from_pretrained(args.model, dtype=dtype)
+    model = model.to(args.device).eval()
 
     def run(paths: list[Path]) -> list[str]:
         inputs = processor(audio=[load(p) for p in paths], sampling_rate=16000,
-                           return_tensors="pt", padding=True).to(args.device)
+                           return_tensors="pt", padding=True).to(args.device, dtype)
         with torch.inference_mode():
             tokens = model.generate(**inputs, tgt_lang="urd")
         return processor.batch_decode(tokens, skip_special_tokens=True)

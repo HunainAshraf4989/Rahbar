@@ -121,8 +121,10 @@ def build_model(args: argparse.Namespace) -> WhisperForConditionalGeneration:
     if args.method == "lora":
         from peft import LoraConfig, get_peft_model
 
+        layers = "q_proj|k_proj|v_proj|out_proj|fc1|fc2"
+        where = ".*decoder.*" if args.lora_scope == "decoder" else ".*"
         config = LoraConfig(r=args.lora_r, lora_alpha=2 * args.lora_r, lora_dropout=0.05,
-                            target_modules=["q_proj", "k_proj", "v_proj", "out_proj", "fc1", "fc2"])
+                            target_modules=f"{where}({layers})")
         model = get_peft_model(model, config)
         model.print_trainable_parameters()
     return model
@@ -143,6 +145,8 @@ def main() -> None:
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--method", choices=["full", "lora"], default="full")
     p.add_argument("--lora-r", type=int, default=32)
+    p.add_argument("--lora-scope", choices=["all", "decoder"], default="all",
+                   help="'decoder' leaves the encoder untouched: faster, less memory")
     p.add_argument("--language", default="ur", help="Whisper language token used for every clip")
     p.add_argument("--subsets", nargs="+", default=["US-CS"])
     p.add_argument("--train-split", choices=["train", "heldout"], default="train")

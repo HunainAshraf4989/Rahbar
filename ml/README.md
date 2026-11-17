@@ -95,80 +95,99 @@ within 30 s. It prints how many clips were split and how many were left whole
 and loudness at the cut. Listen to 20–30 pairs before training; if cuts fall
 inside words, raise `--min-score`.
 
-## 4. Trial run
-
-```
-python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo --method lora --gradient-checkpointing --batch-size 8 --grad-accum 2 --out RUNS/trial --max-steps 200 --eval-steps 100
-```
-
-This checks memory and speed. If the GPU runs out of memory, halve `--batch-size`
-and double `--grad-accum`, keeping their product at 16. Use the settings that work
-for every run that follows.
+## 4. Cost on a 12 GB GPU
 
 Training all weights of these models needs more than 12 GB: the weights, their
 gradients and the optimiser state of the 809M-parameter turbo model alone come to
-about 13 GB. On a 12 GB GPU every run therefore uses LoRA, which trains small
-added matrices and keeps the original weights fixed. Drop `--method lora
---gradient-checkpointing` on a larger GPU to train all weights.
+about 13 GB. Every run therefore uses LoRA, which trains small added matrices and
+keeps the original weights fixed.
+
+`LORA` in the commands below stands for:
+
+```
+--method lora --gradient-checkpointing --batch-size 8 --grad-accum 2 --eval-clips 300
+```
+
+Measured on an RTX 3060 with the turbo model: 10.2 s per step of 16 clips, so one
+pass over the 26,127 training clips is 1,633 steps or 4.6 hours; scoring 600
+validation clips takes 5.6 minutes. If the GPU runs out of memory, halve
+`--batch-size` and double `--grad-accum`.
+
+During training, 300 validation clips are scored every 500 steps to pick the best
+checkpoint. Choices between runs are made on the whole validation set with
+`transcribe` and `score`, as shown below.
 
 ## 5. Experiments
 
-`LORA` below stands for `--method lora --gradient-checkpointing` plus the batch
-settings from the trial run. Every choice in this table is made on `val`.
+Every choice in this table is made on `val`. The step counts are fixed here,
+before any result on `test` is seen.
 
-| Run | Start from | Data | Steps | Scored on |
+| Run | Start from | Changes | Steps | Compared on |
 |---|---|---|---|---|
-| `lr-1e-4`, `lr-3e-4`, `lr-1e-3` | `openai/whisper-large-v3-turbo` | `train` | 1000 | `val` |
-| `select-turbo` | `openai/whisper-large-v3-turbo` | `train` | 1500 | `val` |
-| `select-large` | `openai/whisper-large-v3` | `train` | 1500 | `val` |
-| `full-seed0`, `full-seed1`, `full-seed2` | the better of the two | `train` | same for all three | `val`, then `test` |
-| `rank-16`, `rank-64`, `rank-128` | the better of the two | `train` | as `full-seed0` | `val` |
-| `heldout-machine` | `full-seed0/best` | `heldout`, published transcripts | same for both | `test` |
-| `heldout-human` | `full-seed0/best` | `heldout`, corrected transcripts | same for both | `test` |
+| `lr-1e-4`, `lr-3e-4`, `lr-1e-3` | turbo | learning rate | 500 | `val` |
+| `scope-decoder` | turbo | LoRA in the decoder only | 500 | `val`, against the chosen `lr-*` run |
+| `base-large` | large-v3 | base model | 500 | `val`, against the chosen `lr-*` run |
+| `full-seed0`, `full-seed1`, `full-seed2` | chosen base | seed | 4000 | `val`, then `test` |
+| `rank-16`, `rank-32`, `rank-64`, `rank-128` (optional) | chosen base | LoRA rank | 1500 | `val` |
+| `heldout-machine-seed0..2` | `full-seed0/best` | published transcripts | 400 | `test` |
+| `heldout-human-seed0..2` | `full-seed0/best` | corrected transcripts | 400 | `test` |
 
-Choosing the learning rate (repeat with `3e-4` and `1e-3`; `run.json` in each
-folder gives `best_val_wer`):
-
-```
-python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo LORA --lr 1e-4 --out RUNS/lr-1e-4 --max-steps 1000
-```
-
-Choosing the base model, with the learning rate just chosen:
+Learning rate (repeat with `3e-4` and `1e-3`):
 
 ```
-python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo LORA --lr <chosen> --out RUNS/select-turbo --max-steps 1500
-python -m ml.asr.train --root DATA --base openai/whisper-large-v3 LORA --lr <chosen> --out RUNS/select-large --max-steps 1500
-python -m ml.asr.transcribe --root DATA --split val --subsets US-CS --name select-turbo --model RUNS/select-turbo/best
-python -m ml.asr.transcribe --root DATA --split val --subsets US-CS --name select-large --model RUNS/select-large/best
-python -m ml.eval.score --root DATA --split val --systems select-turbo select-large --baseline select-turbo
+python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo LORA --lr 1e-4 --warmup-steps 50 --eval-steps 250 --out RUNS/lr-1e-4 --max-steps 500
 ```
 
-Full fine-tuning, once per seed:
+LoRA scope and base model, with the learning rate just chosen:
 
 ```
-python -m ml.asr.train --root DATA --base <chosen> LORA --lr <chosen> --out RUNS/full-seed0 --max-steps 6000 --seed 0
+python -m ml.asr.train --root DATA --base openai/whisper-large-v3-turbo LORA --lora-scope decoder --lr <chosen> --warmup-steps 50 --eval-steps 250 --out RUNS/scope-decoder --max-steps 500
+python -m ml.asr.train --root DATA --base openai/whisper-large-v3 LORA --lr <chosen> --warmup-steps 50 --eval-steps 250 --out RUNS/base-large --max-steps 500
 ```
 
-Running a command again resumes it from its last checkpoint. `RUNS/<name>/run.json`
-holds the arguments, data counts, code revision and the validation curve. A
-validation WER that rises while the training loss keeps falling means overfitting;
-`best/` holds the checkpoint from before that point. If the validation WER is still
-falling at the last step, repeat with more steps.
+Compare any two runs on the whole validation set:
+
+```
+python -m ml.asr.transcribe --root DATA --split val --subsets US-CS --name lr-3e-4 --model RUNS/lr-3e-4/best
+python -m ml.asr.transcribe --root DATA --split val --subsets US-CS --name scope-decoder --model RUNS/scope-decoder/best
+python -m ml.eval.score --root DATA --split val --systems lr-3e-4 scope-decoder --baseline lr-3e-4
+```
+
+Decoder-only LoRA is adopted only if its validation WER is not worse than the
+full-scope run's by more than the interval `score` prints for their difference.
+Record the seconds per step of each run; the base and scope comparisons are at
+equal steps, not equal time.
+
+The main model, once per seed:
+
+```
+python -m ml.asr.train --root DATA --base <chosen> LORA --lr <chosen> --out RUNS/full-seed0 --max-steps 4000 --seed 0
+```
+
+Running a command again resumes it from its last checkpoint. A checkpoint is written
+after each validation pass, so stopping in the middle of one loses the steps since
+the previous checkpoint. `RUNS/<name>/run.json` holds the arguments, data counts,
+code revision and the validation curve. A validation WER that rises while the
+training loss keeps falling means overfitting; `best/` holds the checkpoint from
+before that point.
 
 The held-out pair differs only in transcripts:
 
 ```
-python -m ml.asr.train --root DATA --base RUNS/full-seed0/best LORA --lr <chosen> --out RUNS/heldout-machine --train-split heldout --max-steps <n>
-python -m ml.asr.train --root DATA --base RUNS/full-seed0/best LORA --lr <chosen> --out RUNS/heldout-human --train-split heldout --labels corrected.jsonl --max-steps <n>
+python -m ml.asr.train --root DATA --base RUNS/full-seed0/best LORA --lr <chosen> --warmup-steps 40 --eval-steps 100 --train-split heldout --out RUNS/heldout-machine-seed0 --max-steps 400 --seed 0
+python -m ml.asr.train --root DATA --base RUNS/full-seed0/best LORA --lr <chosen> --warmup-steps 40 --eval-steps 100 --train-split heldout --labels corrected.jsonl --out RUNS/heldout-human-seed0 --max-steps 400 --seed 0
 ```
 
 `corrected.jsonl` has one `{"id": ..., "text": ...}` per line. Clips without a
-corrected transcript are left out, so run the first command with the same file
-restricted to machine transcripts if any are missing.
+corrected transcript are left out, so if any are missing give the first command a
+`--labels` file with the published transcripts of the same clips.
 
 Other conditions use the same script: `--lora-r 64` for the rank, `--train-hours 25`
 for a random subset, `--subsets US-CS US-Std US-EngPk` to add the monolingual data,
 `--whole-clips-only` to leave out the parts made by `split_long`.
+
+Training and validation use mixed precision (weights kept in 32-bit, computation in
+16-bit). `transcribe` loads Whisper and Seamless models in 16-bit on a GPU.
 
 ## 6. Benchmark results
 
@@ -207,8 +226,9 @@ Intervals are 95% bootstrap intervals over speaker groups.
 
 ## Tested so far
 
-On CPU with `openai/whisper-tiny` and about 180 clips: download, splits, audio
-conversion, long-clip splitting, full and LoRA fine-tuning with resume, fine-tuning
-on the held-out split with replacement transcripts, Whisper transcription and scoring.
-The `mms`, `seamless` and `omnilingual` backends and all GPU settings have not been
-run yet.
+On an RTX 3060 (12 GB, Windows): setup, download, splits, audio conversion, long-clip
+splitting (2,939 clips split, none rejected) and a 40-step LoRA run of the turbo model
+with validation. On CPU with `openai/whisper-tiny`: all weights and LoRA with resume,
+decoder-only LoRA, the held-out split with replacement transcripts, Whisper
+transcription and scoring. Not yet run on a GPU: `transcribe`, and the `mms`,
+`seamless` and `omnilingual` backends on any machine.
