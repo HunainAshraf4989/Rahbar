@@ -114,7 +114,8 @@ def build_model(args: argparse.Namespace) -> WhisperForConditionalGeneration:
     model.generation_config.language = args.language
     model.generation_config.task = "transcribe"
     model.generation_config.forced_decoder_ids = None
-    model.config.use_cache = False
+    model.config.use_cache = False  # training with gradient checkpointing cannot use the cache
+    model.generation_config.use_cache = True  # but validation generation is far too slow without it
     if args.gradient_checkpointing:
         model.gradient_checkpointing_enable()
     if args.method == "lora":
@@ -212,7 +213,14 @@ def main() -> None:
         remove_unused_columns=False,
         label_names=["labels"],
     )
-    trainer = Seq2SeqTrainer(
+    class MixedPrecisionTrainer(Seq2SeqTrainer):
+        """Generate under fp16 autocast too; plain float32 generation is very slow on a 3060."""
+
+        def prediction_step(self, *a, **k):
+            with torch.autocast("cuda", dtype=torch.float16, enabled=use_gpu):
+                return super().prediction_step(*a, **k)
+
+    trainer = MixedPrecisionTrainer(
         model=model,
         args=training,
         train_dataset=Clips(train_rows, args.root, processor),
