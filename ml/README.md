@@ -234,6 +234,30 @@ Every system is transcribed under one protocol, recorded with its outputs in
   our own model; `--language auto` gives the detection condition;
 - Whisper and Seamless in 16-bit on the GPU, MMS in 32-bit.
 
+Whisper models are also run with `--decoding fallback`, Whisper's own recipe: an
+output that repeats itself (token compression ratio above 1.35) or that the model is
+unsure of (mean log-probability below -1) is decoded again at temperatures 0.2 to
+1.0, with a fixed seed. The no-speech skip is not used, because every benchmark clip
+contains speech.
+
+Conditions per system, fixed before any result of our own model is seen:
+
+| System | Language | Decoding |
+|---|---|---|
+| whisper-large-v3-turbo, whisper-large-v3 | `ur`, `auto` | greedy, fallback |
+| kingabzpro/whisper-large-v3-urdu | `ur` | greedy, fallback |
+| Trelis/whisper-hinglish-preview | `hi` | greedy, fallback |
+| MMS, Seamless, Omnilingual | their Urdu setting | their own |
+| ours | `ur` | greedy (headline), fallback |
+
+The main table gives each baseline in its condition with the lowest code-switched
+WER, the condition most favourable to it, and all conditions go in an appendix.
+Next to WER it reports insertion rate and the share of looping and capped outputs.
+`score --common-clean` repeats the comparison on the clips on which no system in the
+table loops, so a difference that comes only from looping can be told apart.
+`sanity --confusions 30` measures word-spacing and digit conventions and lists the
+most common substitutions, to check the normaliser before the final table.
+
 Run each system first with `--preflight 30` (30 clips per subset, the longest half
 included). It prints the output checks of `ml.eval.sanity` and the estimated time
 for the whole test set. Run the full command only if the checks print no warning.
@@ -274,6 +298,7 @@ forms and case). Nothing is transliterated, so a word in the wrong script is an 
 |---|---|
 | `wer`, `cer` | Word and character error rate, summed over clips |
 | `ins_rate` | Inserted words per reference word; a high value means runaway output |
+| `ur_wer` | Errors on reference words written in Urdu script, plus inserted Urdu-script words, per reference Urdu word |
 | `en_wer` | Errors on reference words written in Latin script, plus inserted Latin words, per reference Latin word |
 | `en_script_kept` | Share of reference Latin words whose aligned output word is in Latin script |
 | `en_exact` | Share of reference Latin words reproduced exactly |

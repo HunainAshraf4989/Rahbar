@@ -9,7 +9,14 @@ from ml.asr.train import check_data, check_resume
 from ml.asr.transcribe import RATE, pieces, token_cap
 from ml.asr.transcribe import check_resume as check_hyps
 from ml.eval.metrics import COUNTS, clip_counts, paired_difference, summarise
-from ml.eval.sanity import checks, compression_ratio, foreign_letters, has_loop, warnings
+from ml.eval.sanity import (
+    checks,
+    compression_ratio,
+    foreign_letters,
+    has_loop,
+    orthography,
+    warnings,
+)
 
 
 def test_long_audio_is_cut_at_the_quietest_point_and_keeps_every_sample():
@@ -102,3 +109,21 @@ def test_a_rate_no_resample_defines_gives_nan_without_warning():
         result = summarise(counts, samples=50)
         diff = paired_difference(counts, counts, samples=50)
     assert np.isnan(result["ur_wer"]["low"]) and np.isnan(diff["ur_wer"]["low"])
+
+
+def test_outputs_made_before_the_decoding_option_still_resume_as_greedy(tmp_path):
+    out, meta = tmp_path / "x.jsonl", tmp_path / "x.json"
+    out.write_text('{"id": "a", "text": "b"}\n', encoding="utf-8")
+    meta.write_text(json.dumps({"protocol": "2", "model": "m"}), encoding="utf-8")
+    check_hyps(out, meta, {"protocol": "2", "model": "m", "decoding_option": "greedy"})
+    with pytest.raises(SystemExit, match="decoding_option"):
+        check_hyps(out, meta, {"protocol": "2", "model": "m", "decoding_option": "fallback"})
+
+
+def test_spacing_and_number_conventions_are_measured():
+    rows = [{"id": "1", "text": "وہ کرتا ہے"}, {"id": "2", "text": "سال 2021 تھا"}]
+    hyps = {"1": {"text": "وہ کرتاہے"}, "2": {"text": "سال دو ہزار اکیس تھا"}}
+    found = orthography(rows, hyps)
+    assert found["spacing_per_100_words"] == pytest.approx(100 / 6)
+    assert found["number_mismatch_share"] == 0.5
+    assert any(ref == "2021" for ref, _ in found["substitutions"])

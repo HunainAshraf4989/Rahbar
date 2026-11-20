@@ -10,20 +10,24 @@ settings. With --baseline, every other system also gets its paired difference
 from that system. Systems transcribed under different protocols are refused
 unless --mixed-protocols is given. Every system is also run through the checks
 of ml.eval.sanity, and a warning is printed when its outputs would distort the
-score. --max-seconds scores only clips up to that length, as a robustness check.
+score, with each system's share of looping, capped, over-long and empty outputs.
+--max-seconds scores only clips up to that length, and --common-clean only the clips
+on which no listed system loops or runs over, both as robustness checks.
 """
 
 import argparse
 import json
 from pathlib import Path
 
+import numpy as np
+
 from ml.asr.data import read_jsonl
 from ml.eval.metrics import clip_counts, paired_difference, summarise
 from ml.eval.sanity import checks, warnings
 from ml.eval.text import NORMALISER_VERSION, normalise
 
-SHOWN = ("wer", "ins_rate", "cer", "en_wer", "en_script_kept", "en_exact", "latin_share",
-         "devanagari_share")
+SHOWN = ("wer", "ins_rate", "cer", "ur_wer", "en_wer", "en_script_kept", "en_exact",
+         "latin_share", "devanagari_share")
 
 
 def cell(estimate: dict[str, float]) -> str:
@@ -47,6 +51,8 @@ def main() -> None:
     p.add_argument("--max-seconds", type=float, help="score only clips up to this length")
     p.add_argument("--mixed-protocols", action="store_true",
                    help="allow systems transcribed under different protocols in one table")
+    p.add_argument("--common-clean", action="store_true",
+                   help="score only clips on which no listed system loops or runs over")
     p.add_argument("--out", type=Path, help="results file (default DATA/results/<split>.json)")
     args = p.parse_args()
 
@@ -77,9 +83,19 @@ def main() -> None:
               "the rest lack a hypothesis from at least one system")
 
     results = {"split": args.split, "normaliser": NORMALISER_VERSION,
-               "max_seconds": args.max_seconds, "settings": settings, "subsets": {}}
+               "max_seconds": args.max_seconds, "common_clean": args.common_clean,
+               "settings": settings, "subsets": {}}
     for subset in sorted({r["subset"] for r in scored}):
         part = [r for r in scored if r["subset"] == subset]
+        found = {s: checks(part, hyps[s]) for s in args.systems}
+        if args.common_clean:  # the same clips for every system: those no system loops on
+            bad = np.any([found[s]["per_clip"]["flagged"] for s in args.systems], axis=0)
+            print(f"\n{subset}: keeping {int((~bad).sum())} of {len(part)} clips on which no "
+                  "system loops, reaches the cap or writes over 3x the reference")
+            part = [r for r, b in zip(part, bad) if not b]
+            if not part:
+                continue
+            found = {s: checks(part, hyps[s]) for s in args.systems}
         groups = [r["group"] for r in part]
         references = [r["text"] for r in part]
         counts = {s: clip_counts(references, [hyps[s][r["id"]]["text"] for r in part])
@@ -92,10 +108,17 @@ def main() -> None:
             summary = summarise(counts[system], groups, args.samples)
             entry["systems"][system] = summary
             print(f"| {system} | " + " | ".join(cell(summary[m]) for m in SHOWN) + " |")
+        print("| system | loops | reached cap | over 3x reference | empty |")
+        print("|---|---|---|---|---|")
+        entry["output_checks"] = {}
         for system in args.systems:
-            found = warnings(checks(part, hyps[system]))
-            entry["warnings"][system] = found
-            for warning in found:
+            shares = found[system]["shares"]
+            entry["output_checks"][system] = shares
+            print(f"| {system} | " + " | ".join(f"{100 * shares[k]:.1f}" for k in (
+                "loop", "hit_cap", "over_3x", "empty")) + " |")
+        for system in args.systems:
+            entry["warnings"][system] = warnings(found[system])
+            for warning in entry["warnings"][system]:
                 print(f"WARNING {system}: {warning}; see python -m ml.eval.sanity")
         if args.baseline:
             entry["difference_from_" + args.baseline] = {}

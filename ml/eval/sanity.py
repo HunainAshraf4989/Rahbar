@@ -16,6 +16,7 @@ import math
 import re
 import unicodedata
 import zlib
+from collections import Counter
 from pathlib import Path
 
 import numpy as np
@@ -79,8 +80,39 @@ def checks(rows: list[dict], hyps: dict[str, dict]) -> dict:
         "wer": errors.sum() / ref.sum(),
         "wer_without_flagged": errors[~flagged].sum() / max(1, ref[~flagged].sum()),
         "cap_recorded": all("hit_cap" in hyps[r["id"]] for r in rows),
-        "per_clip": {"ref": ref, "out": out, "errors": errors, "flags": flags},
+        "per_clip": {"ref": ref, "out": out, "errors": errors, "flags": flags,
+                     "flagged": flagged},
     }
+
+
+def orthography(rows: list[dict], hyps: dict[str, dict]) -> dict:
+    """Error sources that are writing conventions rather than recognition errors.
+
+    spacing: two reference words written as one output word, or one written as two
+    (common in Urdu, where a missing space is often invisible). numbers: clips where
+    only one of reference and output uses digits (digits against spelt-out numbers).
+    """
+    import jiwer
+
+    refs = [normalise(r["text"]) for r in rows]
+    outs = [normalise(hyps[r["id"]]["text"]) for r in rows]
+    spacing = numbers = words = 0
+    for ref, out in zip(refs, outs):
+        rw, ow = ref.split(), out.split()
+        words += len(rw)
+        spacing += sum(a + b in set(ow) for a, b in zip(rw, rw[1:]))
+        spacing += sum(a + b in set(rw) for a, b in zip(ow, ow[1:]))
+        numbers += any(w.isdigit() for w in rw) != any(w.isdigit() for w in ow)
+    pairs: Counter = Counter()
+    aligned = jiwer.process_words(refs, outs)
+    for ref, hyp, chunks in zip(aligned.references, aligned.hypotheses, aligned.alignments):
+        for c in chunks:
+            if c.type == "substitute":
+                for i, j in zip(range(c.ref_start_idx, c.ref_end_idx),
+                                range(c.hyp_start_idx, c.hyp_end_idx)):
+                    pairs[(ref[i], hyp[j])] += 1
+    return {"spacing_per_100_words": 100 * spacing / max(1, words),
+            "number_mismatch_share": numbers / len(rows), "substitutions": pairs}
 
 
 def warnings(result: dict) -> list[str]:
@@ -133,6 +165,9 @@ def main() -> None:
     p.add_argument("--systems", nargs="+", required=True)
     p.add_argument("--worst", type=int, default=10, help="worst clips listed per subset")
     p.add_argument("--hyps", type=Path, help="folder of hypothesis files (default DATA/hyps/SPLIT)")
+    p.add_argument("--confusions", type=int, metavar="N",
+                   help="also report spacing and number conventions and the N most common "
+                        "substitutions, written to DATA/results/confusions-<split>-<system>.tsv")
     args = p.parse_args()
 
     manifest = "benchmark.jsonl" if args.split == "test" else "corpus.jsonl"
@@ -157,6 +192,18 @@ def main() -> None:
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text("\n".join(lines) + "\n", encoding="utf-8-sig")
         print(f"  worst clips with texts: {out}")
+        if args.confusions:
+            table = ["subset\treference_word\toutput_word\tcount"]
+            for subset in sorted({r["subset"] for r in scored}):
+                found = orthography([r for r in scored if r["subset"] == subset], hyps)
+                print(f"  {subset}: spacing differences {found['spacing_per_100_words']:.1f} per "
+                      f"100 reference words; digits on one side only in "
+                      f"{100 * found['number_mismatch_share']:.1f}% of clips")
+                table += [f"{subset}\t{a}\t{b}\t{n}"
+                          for (a, b), n in found["substitutions"].most_common(args.confusions)]
+            path = args.root / "results" / f"confusions-{args.split}-{system}.tsv"
+            path.write_text("\n".join(table) + "\n", encoding="utf-8-sig")
+            print(f"  most common substitutions: {path}")
 
 
 if __name__ == "__main__":

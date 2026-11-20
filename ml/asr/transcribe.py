@@ -8,6 +8,8 @@ The protocol is the same for every backend:
 - audio longer than 30 s is cut at its quietest 0.2 s into pieces of at most 30 s;
   each piece is transcribed on its own and the texts are joined with a space;
 - decoding is greedy: no beam search, no sampling, no temperature fallback;
+  --decoding fallback adds Whisper's own temperature fallback (Whisper models only)
+  as a second condition;
 - output is capped at 30 tokens per second of audio plus 20, and at most 440 tokens,
   per piece (references need at most 30 per second); a clip whose output reached
   the cap is marked hit_cap, so runaway repetition is counted, not hidden;
@@ -44,6 +46,15 @@ PROTOCOL = "2"
 RATE = 16000
 WINDOW = 30.0
 MAX_TOKENS = 440  # Whisper's decoder holds 448 positions, 4 of them taken by the prompt
+# Whisper's own decoding recipe: redo an output at a higher temperature when it repeats
+# itself (zlib ratio of its tokens above 1.35, the token-level equivalent of 2.4 on text)
+# or when the model is unsure of it (mean log-probability below -1). The no-speech skip
+# is left out: every benchmark clip contains speech, so skipping one only deletes words.
+FALLBACK = {"temperature": (0.0, 0.2, 0.4, 0.6, 0.8, 1.0), "compression_ratio_threshold": 1.35,
+            "logprob_threshold": -1.0}
+DECODING = {"greedy": "greedy",
+            "fallback": "greedy, then temperature fallback 0.2-1.0 when the token compression "
+                        "ratio exceeds 1.35 or the mean log-probability is below -1; seed 0"}
 
 
 @dataclass
@@ -103,8 +114,11 @@ def whisper(args: argparse.Namespace) -> tuple[Transcriber, dict]:
         raise SystemExit(f"{args.model} has an old generation config without language tokens; "
                          "add --generation-config with the base model it was trained from")
     config.forced_decoder_ids = None
-    options = {"task": "transcribe", "num_beams": 1, "do_sample": False,
-               "return_timestamps": False}
+    options = {"task": "transcribe", "num_beams": 1, "return_timestamps": False}
+    if args.decoding == "fallback":
+        options.update(FALLBACK)
+    else:
+        options["do_sample"] = False
     if args.language != "auto":
         options["language"] = args.language
     languages = {token: name.strip("<|>") for name, token in config.lang_to_id.items()}
@@ -117,6 +131,7 @@ def whisper(args: argparse.Namespace) -> tuple[Transcriber, dict]:
         with torch.inference_mode():
             ids = model.generate(features.to(args.device, dtype), generation_config=config,
                                  max_new_tokens=cap, **options)
+        ids = getattr(ids, "sequences", ids)  # the log-probability test returns a dict
         out = []
         for row in ids.tolist():
             found = next((languages[t] for t in row if t in languages), None)
@@ -125,7 +140,8 @@ def whisper(args: argparse.Namespace) -> tuple[Transcriber, dict]:
         return out
 
     return run, {"dtype": str(dtype), "model_revision": revision,
-                 "decoding": "greedy", "max_new_tokens": "min(440, ceil(30 * seconds) + 20)"}
+                 "decoding": DECODING[args.decoding],
+                 "max_new_tokens": "min(440, ceil(30 * seconds) + 20)"}
 
 
 def mms(args: argparse.Namespace) -> tuple[Transcriber, dict]:
@@ -201,13 +217,15 @@ def omnilingual(args: argparse.Namespace) -> tuple[Transcriber, dict]:
 
 BACKENDS = {"whisper": whisper, "mms": mms, "seamless": seamless, "omnilingual": omnilingual}
 SAME_RUN = ("protocol", "backend", "model", "adapter", "language", "generation_config",
-            "long_clips", "decoding", "max_new_tokens", "dtype", "model_revision")
+            "long_clips", "decoding_option", "decoding", "max_new_tokens", "dtype",
+            "model_revision")
+BEFORE_OPTIONS = {"decoding_option": "greedy"}  # files written before --decoding existed
 
 
 def settings(args: argparse.Namespace) -> dict:
     return {"protocol": PROTOCOL, "backend": args.backend, "model": args.model,
             "adapter": args.adapter, "language": args.language,
-            "generation_config": args.generation_config,
+            "generation_config": args.generation_config, "decoding_option": args.decoding,
             "long_clips": f"cut at the quietest 0.2 s into pieces of at most {WINDOW:g} s"}
 
 
@@ -220,7 +238,8 @@ def check_resume(out: Path, meta: Path, wanted: dict) -> dict:
                          f"settings. Keep it under another name (for example "
                          f"{out.stem}-initial.jsonl) or delete it, then run again.")
     recorded = json.loads(meta.read_text(encoding="utf-8"))
-    differ = [k for k in SAME_RUN if k in wanted and recorded.get(k) != wanted[k]]
+    differ = [k for k in SAME_RUN
+              if k in wanted and recorded.get(k, BEFORE_OPTIONS.get(k)) != wanted[k]]
     if differ:
         raise SystemExit(f"{out} was made with different settings ({', '.join(differ)}); "
                          "use another --name")
@@ -262,10 +281,15 @@ def main() -> None:
     p.add_argument("--adapter", help="LoRA adapter to apply to a Whisper model")
     p.add_argument("--language", default="ur", help="Whisper language token, or 'auto'")
     p.add_argument("--generation-config", help="take Whisper's generation config from this model")
+    p.add_argument("--decoding", choices=sorted(DECODING), default="greedy",
+                   help="'fallback' adds Whisper's temperature fallback (Whisper models only)")
     p.add_argument("--batch-size", type=int, default=16)
     p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     p.add_argument("--preflight", type=int, metavar="N", help="trial on N clips per subset")
     args = p.parse_args()
+    if args.decoding == "fallback" and args.backend != "whisper":
+        raise SystemExit("--decoding fallback exists only for Whisper models")
+    torch.manual_seed(0)  # the fallback samples; a fixed seed makes a run repeatable
 
     manifest = "benchmark.jsonl" if args.split == "test" else "corpus.jsonl"
     rows = [r for r in read_jsonl(args.root / "manifests" / manifest)
