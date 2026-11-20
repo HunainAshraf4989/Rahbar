@@ -101,8 +101,8 @@ def test_folders_that_differ_only_in_case_are_both_read(tmp_path):
               f"{folders[1]}/audio/SPEAKER_002_Podcast_0180.wav",
               "corpus/US-CS/short/news/news_final_transcription.jsonl"]
     names = local_names(files)
-    assert names[files[0]].endswith("PODCAST/clean_transcription.case1.jsonl")
-    assert names[files[1]].endswith("Podcast/clean_transcription.case2.jsonl")
+    assert names[files[0]].endswith("PODCAST/clean_transcription.clash1.jsonl")
+    assert names[files[1]].endswith("Podcast/clean_transcription.clash2.jsonl")
     assert len({n.lower() for n in names.values()}) == len(files)
     assert names[files[4]] == files[4]
 

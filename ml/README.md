@@ -42,7 +42,7 @@ All splits are fixed by `data.py manifest` with seed 0 on a pinned dataset revis
   programmes as the corpus, so speakers are not guaranteed disjoint between splits.
 - Duplicate rows, rows without audio and rows with empty text are dropped.
 - The benchmark has folders named both `PODCAST` and `Podcast`, each with its own
-  transcript file. Both are read; they are stored as `.case1` and `.case2` files so
+  transcript file. Both are read; they are stored as `.clash1` and `.clash2` files so
   that neither overwrites the other on a disk that ignores letter case.
 
 ## 1. Machine check

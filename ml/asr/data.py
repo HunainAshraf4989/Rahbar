@@ -75,7 +75,7 @@ def local_names(files: list[str]) -> dict[str, str]:
         if len(clash) > 1:
             for number, name in enumerate(sorted(clash), 1):
                 path = Path(name)
-                names[name] = path.with_name(f"{path.stem}.case{number}{path.suffix}").as_posix()
+                names[name] = path.with_name(f"{path.stem}.clash{number}{path.suffix}").as_posix()
     return names
 
 
@@ -100,7 +100,9 @@ def fetch(raw: Path, name: str, local: str) -> str | None:
                     got = hf_hub_download(REPO, name, repo_type="dataset", revision=REVISION,
                                           local_dir=scratch)
                     target.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.move(got, target)
+                    # copy, not move: Python 3.12+ makes temporary folders on Windows readable
+                    # by their creator only, and a moved file would keep that restriction
+                    shutil.copyfile(got, target)
             return None
         except Exception as problem:  # network errors vary; retry them all
             error = problem
