@@ -11,6 +11,7 @@ scoring it against other systems on the dataset's human-corrected benchmark.
 | `asr/train.py` | Fine-tune (all weights or LoRA), resumable, best checkpoint chosen on validation WER |
 | `asr/transcribe.py` | Transcribe a split with any supported model |
 | `eval/score.py` | Results table with bootstrap confidence intervals |
+| `eval/sanity.py` | Checks on saved outputs: runaway repetition, over-long or empty outputs, stray tokens |
 | `eval/text.py`, `eval/metrics.py` | Scoring normaliser and metric definitions |
 
 Run every command from the repository root. `DATA` and `RUNS` stand for two
@@ -89,11 +90,30 @@ mono copies and, with `--delete-raw`, removes each original afterwards.
 `DATA/manifests/stats.json` records what every step kept and dropped.
 
 Whisper reads at most 30 s and corpus clips are capped at 35 s, so `split_long`
-cuts each longer training clip once, at the longest pause that leaves both parts
-within 30 s. It prints how many clips were split and how many were left whole
-(those are not trained on). Each part records its alignment score, pause length
-and loudness at the cut. Listen to 20–30 pairs before training; if cuts fall
-inside words, raise `--min-score`.
+cuts each longer training and validation clip once, at the longest pause between
+two neighbouring words that both have alignment times, leaving both parts within
+30 s. Numbers and other words without letters get no alignment times, so a cut is
+never placed next to one. It prints how many clips were split and how many were
+left whole (those are not trained on). Each part records its alignment score,
+pause length and loudness at the cut. Then check the split and copy 20 pairs for
+listening (half with a number near the cut, half with the shortest pauses):
+
+```
+python -m ml.asr.split_long --root DATA --check --listen LISTEN
+```
+
+The check must print `all pairs pass`. Fill in the verdict column of
+`LISTEN/pairs.tsv`.
+
+To split again (after a change to `split_long`), rebuild the manifest first. The
+16 kHz files already written are reused, so the original WAV files are not needed:
+
+```
+python -m ml.asr.data manifest --root DATA
+python -m ml.asr.data audio --root DATA
+python -m ml.asr.split_long --root DATA
+python -m ml.asr.split_long --root DATA --check --listen LISTEN
+```
 
 ## 4. Cost on a 12 GB GPU
 
@@ -105,7 +125,7 @@ keeps the original weights fixed.
 `LORA` in the commands below stands for:
 
 ```
---method lora --gradient-checkpointing --batch-size 8 --grad-accum 2 --eval-clips 300
+--method lora --gradient-checkpointing --batch-size 8 --grad-accum 2
 ```
 
 Measured on an RTX 3060 with the turbo model: 10.2 s per step of 16 clips, so one
@@ -113,9 +133,19 @@ pass over the 26,127 training clips is 1,633 steps or 4.6 hours; scoring 600
 validation clips takes 5.6 minutes. If the GPU runs out of memory, halve
 `--batch-size` and double `--grad-accum`.
 
-During training, 300 validation clips are scored every 500 steps to pick the best
-checkpoint. Choices between runs are made on the whole validation set with
-`transcribe` and `score`, as shown below.
+During training, 600 validation clips are scored with greedy decoding every 500
+steps to pick the best checkpoint. Choices between runs are made on the whole
+validation set with `transcribe` and `score`, as shown below.
+
+Before every long run, add `--preflight` to the same command. It takes about five
+minutes: 10 steps on the clips with the longest transcripts, validation on the 32
+longest, then it prints peak GPU memory, seconds per step and the estimated time
+of the full run, in `OUT/preflight`. Start the real run only if the memory is below
+the GPU's size and the estimate is what you expect. On Windows, memory above the
+GPU's size is lent from system memory without an error and makes every step far
+slower; both scripts print a warning when that happens. A training run stops by
+itself if the loss becomes not-a-number, and refuses to resume when its settings
+or the manifest have changed.
 
 ## 5. Experiments
 
@@ -191,7 +221,25 @@ Training and validation use mixed precision (weights kept in 32-bit, computation
 
 ## 6. Benchmark results
 
+Every system is transcribed under one protocol, recorded with its outputs in
+`DATA/hyps/<split>/<name>.json`:
+
+- audio over 30 s (84 code-switched and 13 Urdu-only test clips) is cut at its
+  quietest 0.2 s into pieces of at most 30 s, the same for every system;
+- greedy decoding, with no beam search, sampling or temperature fallback;
+- output capped at 30 tokens per second of audio plus 20, at most 440 per piece
+  (references need at most 30 per second), and every clip that reaches the cap is
+  counted;
+- language forced to `ur` for Whisper models (`hi` for the Hinglish model), as for
+  our own model; `--language auto` gives the detection condition;
+- Whisper and Seamless in 16-bit on the GPU, MMS in 32-bit.
+
+Run each system first with `--preflight 30` (30 clips per subset, the longest half
+included). It prints the output checks of `ml.eval.sanity` and the estimated time
+for the whole test set. Run the full command only if the checks print no warning.
+
 ```
+python -m ml.asr.transcribe --root DATA --name whisper-turbo --model openai/whisper-large-v3-turbo --preflight 30
 python -m ml.asr.transcribe --root DATA --name whisper-large-v3 --model openai/whisper-large-v3
 python -m ml.asr.transcribe --root DATA --name whisper-turbo --model openai/whisper-large-v3-turbo
 python -m ml.asr.transcribe --root DATA --name urdu-kingabzpro --model kingabzpro/whisper-large-v3-urdu
@@ -200,13 +248,22 @@ python -m ml.asr.transcribe --root DATA --name mms-1b --model facebook/mms-1b-al
 python -m ml.asr.transcribe --root DATA --name seamless-v2 --model facebook/seamless-m4t-v2-large --backend seamless
 python -m ml.asr.transcribe --root DATA --name omni-llm-1b --model omniASR_LLM_1B --backend omnilingual
 python -m ml.asr.transcribe --root DATA --name ours --model RUNS/full-seed0/best
+python -m ml.eval.sanity --root DATA --systems whisper-large-v3 whisper-turbo urdu-kingabzpro hinglish-trelis mms-1b seamless-v2 omni-llm-1b ours
 python -m ml.eval.score --root DATA --systems whisper-large-v3 whisper-turbo urdu-kingabzpro hinglish-trelis mms-1b seamless-v2 omni-llm-1b ours --baseline ours
 ```
 
-The table is printed per subset and saved to `DATA/results/test.json`. A system
-that is not run through `transcribe` (a commercial service, for example) is scored
-the same way once its output is saved as `DATA/hyps/test/<name>.jsonl` with one
-`{"id": ..., "text": ...}` per line.
+The table is printed per subset and saved to `DATA/results/test.json` with every
+system's recorded settings. `score` refuses systems transcribed under different
+protocols, and prints a warning for any system whose outputs fail the sanity
+checks. `--max-seconds 30` scores only the clips that were not cut, as a
+robustness check. A run that stops continues where it stopped, but only with
+the same settings; if the GPU runs out of memory the batch size is halved and the
+run goes on. A system that is not run through `transcribe` (a commercial service,
+for example) is scored the same way once its output is saved as
+`DATA/hyps/test/<name>.jsonl` with one `{"id": ..., "text": ...}` per line.
+
+The omnilingual backend needs the `omnilingual-asr` package, which may not install
+on Windows; its decoding is the package's own and is recorded as such.
 
 ## Metrics
 
@@ -216,6 +273,7 @@ forms and case). Nothing is transliterated, so a word in the wrong script is an 
 | Column | Meaning |
 |---|---|
 | `wer`, `cer` | Word and character error rate, summed over clips |
+| `ins_rate` | Inserted words per reference word; a high value means runaway output |
 | `en_wer` | Errors on reference words written in Latin script, plus inserted Latin words, per reference Latin word |
 | `en_script_kept` | Share of reference Latin words whose aligned output word is in Latin script |
 | `en_exact` | Share of reference Latin words reproduced exactly |
@@ -227,8 +285,10 @@ Intervals are 95% bootstrap intervals over speaker groups.
 ## Tested so far
 
 On an RTX 3060 (12 GB, Windows): setup, download, splits, audio conversion, long-clip
-splitting (2,939 clips split, none rejected) and a 40-step LoRA run of the turbo model
-with validation. On CPU with `openai/whisper-tiny`: all weights and LoRA with resume,
-decoder-only LoRA, the held-out split with replacement transcripts, Whisper
-transcription and scoring. Not yet run on a GPU: `transcribe`, and the `mms`,
-`seamless` and `omnilingual` backends on any machine.
+splitting with the earlier cut rule, a 40-step LoRA run of the turbo model with
+validation, and the earlier transcription protocol for two Whisper models. On CPU
+with `openai/whisper-tiny`: all weights and LoRA with resume, decoder-only LoRA,
+the held-out split with replacement transcripts, Whisper transcription under the
+current protocol, sanity checks and scoring. Not yet run on a GPU: the current
+`split_long`, `transcribe` and `--preflight`; not run on any machine: the `mms`,
+`seamless` and `omnilingual` backends.

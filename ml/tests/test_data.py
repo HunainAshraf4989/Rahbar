@@ -1,13 +1,27 @@
 import json
 
+import numpy as np
+import soundfile as sf
+
 from ml.asr.data import (
     assign_heldout,
     assign_validation,
+    convert,
     fingerprint,
     load_rows,
     local_names,
     mark_benchmark_overlap,
 )
+
+
+def test_audio_step_measures_an_existing_flac_without_the_original(tmp_path):
+    stereo = np.random.default_rng(0).uniform(-0.5, 0.5, (16000 * 2, 2)).astype("float32")
+    sf.write(tmp_path / "raw.wav", stereo, 16000)
+    target = tmp_path / "clip.flac"
+    first = convert((str(tmp_path / "raw.wav"), str(target)))
+    (tmp_path / "raw.wav").unlink()
+    assert convert((str(tmp_path / "raw.wav"), str(target))) == first
+    assert first[0] == 2.0
 
 SENTENCE = "یہ ایک لمبا جملہ ہے جس میں کافی سارے الفاظ موجود ہیں اور relay بھی ہے"
 

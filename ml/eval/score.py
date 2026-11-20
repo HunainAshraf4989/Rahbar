@@ -5,8 +5,12 @@
 Reads DATA/hyps/<split>/<system>.jsonl (written by ml.asr.transcribe, or by any
 other tool as one {"id", "text"} per line). Results are reported per subset with
 95% bootstrap intervals that resample whole speaker groups, and saved to
-DATA/results/<split>.json. With --baseline, every other system also gets its
-paired difference from that system.
+DATA/results/<split>.json together with each system's recorded transcription
+settings. With --baseline, every other system also gets its paired difference
+from that system. Systems transcribed under different protocols are refused
+unless --mixed-protocols is given. Every system is also run through the checks
+of ml.eval.sanity, and a warning is printed when its outputs would distort the
+score. --max-seconds scores only clips up to that length, as a robustness check.
 """
 
 import argparse
@@ -15,15 +19,22 @@ from pathlib import Path
 
 from ml.asr.data import read_jsonl
 from ml.eval.metrics import clip_counts, paired_difference, summarise
+from ml.eval.sanity import checks, warnings
 from ml.eval.text import NORMALISER_VERSION, normalise
 
-SHOWN = ("wer", "cer", "en_wer", "en_script_kept", "en_exact", "latin_share", "devanagari_share")
+SHOWN = ("wer", "ins_rate", "cer", "en_wer", "en_script_kept", "en_exact", "latin_share",
+         "devanagari_share")
 
 
 def cell(estimate: dict[str, float]) -> str:
     if estimate["value"] != estimate["value"]:  # not a number: no English words in this subset
         return "-"
     return f"{100 * estimate['value']:.1f} ({100 * estimate['low']:.1f}-{100 * estimate['high']:.1f})"
+
+
+def protocol(folder: Path, system: str) -> dict:
+    meta = folder / f"{system}.json"
+    return json.loads(meta.read_text(encoding="utf-8")) if meta.exists() else {}
 
 
 def main() -> None:
@@ -33,30 +44,47 @@ def main() -> None:
     p.add_argument("--systems", nargs="+", required=True)
     p.add_argument("--baseline", help="system that the others are compared with")
     p.add_argument("--samples", type=int, default=2000, help="bootstrap resamples")
+    p.add_argument("--max-seconds", type=float, help="score only clips up to this length")
+    p.add_argument("--mixed-protocols", action="store_true",
+                   help="allow systems transcribed under different protocols in one table")
+    p.add_argument("--out", type=Path, help="results file (default DATA/results/<split>.json)")
     args = p.parse_args()
+
+    folder = args.root / "hyps" / args.split
+    settings = {s: protocol(folder, s) for s in args.systems}
+    for system, recorded in settings.items():
+        if recorded:
+            print(f"{system}: protocol {recorded['protocol']}, {recorded['backend']} "
+                  f"{recorded['model']}, language {recorded['language']}, {recorded['decoding']}, "
+                  f"{recorded['dtype']}")
+        else:
+            print(f"{system}: transcription settings not recorded")
+    protocols = {s.get("protocol", "unrecorded") for s in settings.values()}
+    if len(protocols) > 1 and not args.mixed_protocols:
+        raise SystemExit(f"the systems were transcribed under different protocols {protocols}; "
+                         "re-run them, or pass --mixed-protocols for a side table")
 
     manifest = "benchmark.jsonl" if args.split == "test" else "corpus.jsonl"
     rows = [r for r in read_jsonl(args.root / "manifests" / manifest)
-            if r["split"] == args.split and normalise(r["text"])]
-    outputs = {}
-    for system in args.systems:
-        path = args.root / "hyps" / args.split / f"{system}.jsonl"
-        outputs[system] = {r["id"]: r["text"] for r in read_jsonl(path)}
-    scored = [r for r in rows if all(r["id"] in texts for texts in outputs.values())]
+            if r["split"] == args.split and normalise(r["text"])
+            and (args.max_seconds is None or r["duration"] <= args.max_seconds)]
+    hyps = {s: {h["id"]: h for h in read_jsonl(folder / f"{s}.jsonl")} for s in args.systems}
+    scored = [r for r in rows if all(r["id"] in h for h in hyps.values())]
     if not scored:
         raise SystemExit("no clip has a hypothesis from every system")
     if len(scored) < len(rows):
         print(f"WARNING: scoring {len(scored)} of {len(rows)} clips; "
               "the rest lack a hypothesis from at least one system")
 
-    results = {"split": args.split, "normaliser": NORMALISER_VERSION, "subsets": {}}
+    results = {"split": args.split, "normaliser": NORMALISER_VERSION,
+               "max_seconds": args.max_seconds, "settings": settings, "subsets": {}}
     for subset in sorted({r["subset"] for r in scored}):
         part = [r for r in scored if r["subset"] == subset]
         groups = [r["group"] for r in part]
         references = [r["text"] for r in part]
-        counts = {s: clip_counts(references, [outputs[s][r["id"]] for r in part])
+        counts = {s: clip_counts(references, [hyps[s][r["id"]]["text"] for r in part])
                   for s in args.systems}
-        entry = {"clips": len(part), "systems": {}}
+        entry = {"clips": len(part), "systems": {}, "warnings": {}}
         print(f"\n{subset}: {len(part)} clips, {sum(r['duration'] for r in part) / 3600:.2f} h")
         print("| system | " + " | ".join(SHOWN) + " |")
         print("|---|" + "---|" * len(SHOWN))
@@ -64,6 +92,11 @@ def main() -> None:
             summary = summarise(counts[system], groups, args.samples)
             entry["systems"][system] = summary
             print(f"| {system} | " + " | ".join(cell(summary[m]) for m in SHOWN) + " |")
+        for system in args.systems:
+            found = warnings(checks(part, hyps[system]))
+            entry["warnings"][system] = found
+            for warning in found:
+                print(f"WARNING {system}: {warning}; see python -m ml.eval.sanity")
         if args.baseline:
             entry["difference_from_" + args.baseline] = {}
             for system in args.systems:
@@ -75,7 +108,7 @@ def main() -> None:
                     print(f"{system} minus {args.baseline}, WER: {100 * w['value']:+.1f} points "
                           f"({100 * w['low']:+.1f} to {100 * w['high']:+.1f})")
         results["subsets"][subset] = entry
-    out = args.root / "results" / f"{args.split}.json"
+    out = args.out or args.root / "results" / f"{args.split}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=2), encoding="utf-8")
     print(f"\nsaved {out}")

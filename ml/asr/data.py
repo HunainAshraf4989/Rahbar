@@ -321,12 +321,23 @@ def write_stats(root: Path, rows: list[dict], extra: dict) -> None:
 
 
 def convert(job: tuple[str, str]) -> tuple[float, str] | None:
-    """Write one clip as 16 kHz mono FLAC; return its duration and a hash of the samples."""
+    """Write one clip as 16 kHz mono FLAC; return its duration and a hash of the samples.
+
+    A readable FLAC already at the target is kept and only measured, so the step can
+    be repeated after the original WAV files have been deleted.
+    """
     import librosa
     import numpy as np
     import soundfile as sf
 
     source, target = job
+    if Path(target).exists():
+        try:
+            pcm, rate = sf.read(target, dtype="int16")
+            if rate == 16000 and pcm.ndim == 1 and len(pcm):
+                return len(pcm) / 16000, hashlib.sha1(pcm.astype("<i2").tobytes()).hexdigest()
+        except Exception:  # unreadable leftover of an interrupted run: convert again
+            pass
     try:
         samples, rate = sf.read(source, dtype="float32", always_2d=True)
         mono = samples.mean(axis=1)
@@ -344,8 +355,9 @@ def convert(job: tuple[str, str]) -> tuple[float, str] | None:
 def prepare_audio(root: Path, workers: int, delete_raw: bool) -> None:
     corpus = read_jsonl(root / "manifests" / "corpus.jsonl")
     benchmark = read_jsonl(root / "manifests" / "benchmark.jsonl")
-    todo = [r for r in corpus + benchmark
-            if "audio" not in r and (root / "raw" / r["raw_audio"]).exists()]
+    todo = [r for r in corpus + benchmark if "audio" not in r and (
+        (root / "raw" / r["raw_audio"]).exists()
+        or (root / "audio16k" / f"{r['id']}.flac").exists())]
     jobs = [(str(root / "raw" / r["raw_audio"]), str(root / "audio16k" / f"{r['id']}.flac"))
             for r in todo]
     with ProcessPoolExecutor(workers) as pool:
@@ -354,7 +366,7 @@ def prepare_audio(root: Path, workers: int, delete_raw: bool) -> None:
                 row["duration"], row["sha1"] = round(result[0], 3), result[1]
                 row["audio"] = f"audio16k/{row['id']}.flac"
                 if delete_raw:
-                    (root / "raw" / row["raw_audio"]).unlink()
+                    (root / "raw" / row["raw_audio"]).unlink(missing_ok=True)
             if done % 2000 == 0:
                 print(f"{done}/{len(todo)} clips converted")
     test_audio = {r["sha1"] for r in benchmark if "sha1" in r}

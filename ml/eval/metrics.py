@@ -22,6 +22,7 @@ COUNTS = (
     "en_ref", "en_errors", "en_script_kept", "en_exact",
     "ur_ref", "ur_errors",
     "hyp_words", "hyp_latin", "hyp_devanagari",
+    "substitutions", "deletions", "insertions",
 )
 
 
@@ -56,6 +57,7 @@ def clip_counts(references: Sequence[str], hypotheses: Sequence[str]) -> np.ndar
                         c["en_exact"] += 1
             elif chunk.type == "substitute":
                 c["word_errors"] += len(ref_span)
+                c["substitutions"] += len(ref_span)
                 for r, h in zip(ref_span, hyp_span):
                     if ref_script[r] == "latin":
                         c["en_errors"] += 1
@@ -64,11 +66,13 @@ def clip_counts(references: Sequence[str], hypotheses: Sequence[str]) -> np.ndar
                         c["ur_errors"] += 1
             elif chunk.type == "delete":
                 c["word_errors"] += len(ref_span)
+                c["deletions"] += len(ref_span)
                 for r in ref_span:
                     c["en_errors"] += ref_script[r] == "latin"
                     c["ur_errors"] += ref_script[r] == "urdu"
             elif chunk.type == "insert":
                 c["word_errors"] += len(hyp_span)
+                c["insertions"] += len(hyp_span)
                 for h in hyp_span:
                     c["en_errors"] += hyp_script[h] == "latin"
                     c["ur_errors"] += hyp_script[h] == "urdu"
@@ -98,7 +102,18 @@ def rates(total: np.ndarray) -> dict[str, np.ndarray]:
         "ur_wer": _ratio(t["ur_errors"], t["ur_ref"]),
         "latin_share": _ratio(t["hyp_latin"], t["hyp_words"]),
         "devanagari_share": _ratio(t["hyp_devanagari"], t["hyp_words"]),
+        "sub_rate": _ratio(t["substitutions"], t["ref_words"]),
+        "del_rate": _ratio(t["deletions"], t["ref_words"]),
+        "ins_rate": _ratio(t["insertions"], t["ref_words"]),
     }
+
+
+def _interval(values: np.ndarray) -> tuple[float, float]:
+    """95% percentile interval, or NaN when no resample defines the rate."""
+    if np.all(np.isnan(values)):
+        return np.nan, np.nan
+    low, high = np.nanpercentile(values, [2.5, 97.5])
+    return float(low), float(high)
 
 
 def _resamples(
@@ -124,9 +139,8 @@ def summarise(
     boot = rates(_resamples(len(counts), groups, samples, seed) @ counts)
     out = {}
     for name, value in point.items():
-        low, high = np.nanpercentile(boot[name], [2.5, 97.5]) if not np.isnan(value) else (
-            np.nan, np.nan)
-        out[name] = {"value": float(value), "low": float(low), "high": float(high)}
+        low, high = _interval(boot[name]) if not np.isnan(value) else (np.nan, np.nan)
+        out[name] = {"value": float(value), "low": low, "high": high}
     return out
 
 
@@ -143,11 +157,6 @@ def paired_difference(
     point_a, point_b = rates(counts_a.sum(axis=0)), rates(counts_b.sum(axis=0))
     out = {}
     for name in point_a:
-        diff = a[name] - b[name]
-        low, high = np.nanpercentile(diff, [2.5, 97.5])
-        out[name] = {
-            "value": float(point_a[name] - point_b[name]),
-            "low": float(low),
-            "high": float(high),
-        }
+        low, high = _interval(a[name] - b[name])
+        out[name] = {"value": float(point_a[name] - point_b[name]), "low": low, "high": high}
     return out
