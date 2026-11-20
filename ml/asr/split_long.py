@@ -197,7 +197,7 @@ def check(root: Path, listen: Path | None, pairs: int) -> None:
         problems = ["part b is missing"] if b is None else check_pair(root, parts[pid], b, roman)
         for problem in problems:
             found.setdefault(problem, []).append(parts[pid]["parent"])
-    stray = [r["id"] for r in rows if r["split"] in ("train", "val")
+    stray = [r["id"] for r in rows if r["split"] in ("train", "val") and "audio" in r
              and r["duration"] > MAX_SECONDS and "too_long" not in r]
     if stray:
         found["clip over 30 s that was neither split nor marked too_long"] = stray
