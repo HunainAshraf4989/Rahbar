@@ -79,3 +79,30 @@ def load_settings(env_file: Path = Path(".env")) -> Settings:
         raise ValueError("Invalid Gemini model ID")
     return Settings(api_key=key.strip(), voice_id=voice, gemini_api_key=gemini_key.strip(),
                     gemini_model=model, answer_mode=mode)
+
+
+@dataclass(frozen=True)
+class RetrievalSettings:
+    gemini_api_key: str = field(repr=False)
+    models: tuple[str, ...] = ("gemini-2.5-flash", "gemini-2.5-flash-lite")
+    judge_models: tuple[str, ...] = ("gemini-2.5-pro", "gemini-2.5-flash")
+
+
+def load_retrieval_settings(root: Path) -> RetrievalSettings:
+    """Text retrieval does not require STT/TTS credentials. Never print loaded values."""
+    values = {**dotenv_values(root / '.env'), **dotenv_values(root / '.env.local'), **os.environ}
+    key = (values.get('RAHBAR_GEMINI_API_KEY') or values.get('GEMINI_API_KEY')
+           or values.get('GOOGLE_API_KEY') or '').strip()
+    models = tuple(part.strip() for part in
+                   (values.get('RAHBAR_RAG_MODELS') or
+                    'gemini-2.5-flash,gemini-2.5-flash-lite').split(','))
+    if not key:
+        raise ValueError('Missing Gemini API key for text RAG')
+    if not models or any(not re.fullmatch(r'[a-zA-Z0-9._-]+', model) for model in models):
+        raise ValueError('Invalid RAHBAR_RAG_MODELS')
+    judge_models = tuple(part.strip() for part in
+                         (values.get('RAHBAR_RAG_JUDGE_MODELS') or
+                          'gemini-2.5-pro,gemini-2.5-flash').split(','))
+    if any(not re.fullmatch(r'[a-zA-Z0-9._-]+', model) for model in judge_models):
+        raise ValueError('Invalid RAHBAR_RAG_JUDGE_MODELS')
+    return RetrievalSettings(gemini_api_key=key, models=models, judge_models=judge_models)

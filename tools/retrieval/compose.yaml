@@ -1,0 +1,8 @@
+services:
+  qdrant:
+    image: qdrant/qdrant@sha256:75eab8c4ba42096724fdcfde8b4de0b5713d529dde32f285a1f86fdcb2c9e50c
+    ports:
+      - "127.0.0.1:${RAHBAR_QDRANT_PORT:-16333}:6333"
+    volumes:
+      - "${RAHBAR_QDRANT_DATA:?Set a project-local Qdrant data directory}:/qdrant/storage"
+    restart: "no"
