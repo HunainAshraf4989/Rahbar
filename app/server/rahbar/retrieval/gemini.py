@@ -50,6 +50,10 @@ class GeminiRouter:
                                   {'text': json.dumps(payload, ensure_ascii=False)}]}],
                               'generationConfig': {'temperature': 0, 'maxOutputTokens': max_output_tokens,
                                   'responseMimeType': 'application/json',
+                                  # Leave output room for JSON instead of allowing dynamic
+                                  # thinking to exhaust the shared output-token budget.
+                                  **({'thinkingConfig': {'thinkingBudget': 512}}
+                                     if model in {'gemini-2.5-flash', 'gemini-2.5-flash-lite'} else {}),
                                   **({'responseJsonSchema': schema} if schema is not None else {})}}, timeout=45)
                 except httpx.RequestError:
                     raise RuntimeError('Gemini transport failure') from None

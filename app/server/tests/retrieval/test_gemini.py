@@ -59,3 +59,21 @@ def test_json_mode_does_not_send_empty_schema():
             result = await GeminiRouter(client, 'secret', ['available']).generate('', {}, None)
             assert result.data['statements']
     asyncio.run(run())
+
+
+@pytest.mark.parametrize('model', ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'other-model'])
+def test_flash_thinking_is_bounded_and_truncated_output_is_rejected(model):
+    import json
+    async def run():
+        def handle(request):
+            config = json.loads(request.content)['generationConfig']
+            if model.startswith('gemini-2.5-flash'):
+                assert config['thinkingConfig'] == {'thinkingBudget': 512}
+            else:
+                assert 'thinkingConfig' not in config
+            return httpx.Response(200, json={'candidates': [{'finishReason': 'MAX_TOKENS',
+                'content': {'parts': [{'text': '{"outcome":"answered"}'}]}}]})
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+            with pytest.raises(RuntimeError, match='Invalid Gemini structured response'):
+                await GeminiRouter(client, 'secret', [model]).generate('', {}, None)
+    asyncio.run(run())
