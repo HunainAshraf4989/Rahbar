@@ -153,6 +153,24 @@ def build_model(args: argparse.Namespace) -> WhisperForConditionalGeneration:
     return model
 
 
+def save_validation_outputs(folder: Path, step: int, rows: list[dict], references: list[str],
+                            hypotheses: list[str]) -> None:
+    """Keep what the model wrote at every validation pass, so curves can be re-scored later.
+
+    The clips come back in the order of `rows` (one process, no shuffling). Never stops a run.
+    """
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+        ids = ([r["id"] for r in rows] if len(rows) == len(hypotheses)
+               else [None] * len(hypotheses))
+        with (folder / f"step-{step}.jsonl").open("w", encoding="utf-8") as file:
+            for clip, reference, hypothesis in zip(ids, references, hypotheses):
+                file.write(json.dumps({"id": clip, "reference": reference, "text": hypothesis},
+                                      ensure_ascii=False) + "\n")
+    except Exception as error:  # a full disk must not end a 20-hour run
+        print(f"WARNING: could not save the validation outputs: {error}")
+
+
 def git_revision() -> str:
     try:
         return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
@@ -244,6 +262,8 @@ def main() -> None:
     p.add_argument("--workers", type=int, default=4)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--gradient-checkpointing", action="store_true")
+    p.add_argument("--keep-checkpoints", action="store_true",
+                   help="keep every checkpoint, not only the best and the latest")
     p.add_argument("--preflight", action="store_true",
                    help="10 worst-case steps in OUT/preflight and a time estimate for the run")
     args = p.parse_args()
@@ -276,7 +296,9 @@ def main() -> None:
         references = processor.tokenizer.batch_decode(labels, skip_special_tokens=True)
         hypotheses = processor.tokenizer.batch_decode(prediction.predictions,
                                                       skip_special_tokens=True)
-        keep = [i for i, r in enumerate(references) if normalise(r)]
+        save_validation_outputs(out / "validation", trainer.state.global_step, val_rows,
+                                references, hypotheses)
+        keep =[i for i, r in enumerate(references) if normalise(r)]
         counts = clip_counts([references[i] for i in keep], [hypotheses[i] for i in keep])
         return {k: float(v) for k, v in rates(counts.sum(axis=0)).items()}
 
@@ -296,7 +318,7 @@ def main() -> None:
         eval_steps=args.eval_steps,
         save_strategy="steps",
         save_steps=args.eval_steps,
-        save_total_limit=2,
+        save_total_limit=None if args.keep_checkpoints else 2,
         load_best_model_at_end=True,
         metric_for_best_model="wer",
         greater_is_better=False,
@@ -350,12 +372,20 @@ def main() -> None:
         callbacks=[timer],
     )
     out.mkdir(parents=True, exist_ok=True)
+    record["sessions"] = []  # one entry per start or resume, with its real training time
     if (out / "run.json").exists():
-        record["started"] = json.loads((out / "run.json").read_text(encoding="utf-8"))["started"]
+        earlier = json.loads((out / "run.json").read_text(encoding="utf-8"))
+        record["started"] = earlier["started"]
+        record["sessions"] = earlier.get("sessions", [])
     (out / "run.json").write_text(json.dumps(record, indent=2), encoding="utf-8")
 
     resume = any(out.glob("checkpoint-*"))
-    trainer.train(resume_from_checkpoint=resume)
+    session = {"began": time.strftime("%Y-%m-%d %H:%M:%S"), "resumed": resume}
+    result = trainer.train(resume_from_checkpoint=resume)
+    session.update(train_seconds=round(result.metrics.get("train_runtime", float("nan")), 1),
+                   last_step=trainer.state.global_step)
+    record["sessions"].append(session)
+    record["train_seconds_total"] = round(sum(s["train_seconds"] for s in record["sessions"]), 1)
     history = [e for e in trainer.state.log_history if "eval_wer" in e or "loss" in e]
     record.update(best_checkpoint=trainer.state.best_model_checkpoint,
                   best_val_wer=trainer.state.best_metric, history=history,

@@ -191,8 +191,15 @@ equal steps, not equal time.
 The main model, once per seed:
 
 ```
-python -m ml.asr.train --root DATA --base <chosen> LORA --lr <chosen> --out RUNS/full-seed0 --max-steps 4000 --seed 0
+python -m ml.asr.train --root DATA --base <chosen> LORA --lr <chosen> --out RUNS/full-seed0 --max-steps 4000 --seed 0 --keep-checkpoints
 ```
+
+`--keep-checkpoints` keeps every checkpoint instead of the best and the latest, so the
+learning curve can be scored on the whole validation set later. Every validation pass
+also writes its outputs to `OUT/validation/step-N.jsonl` (id, reference, output), and
+`run.json` records the real training seconds of each start or resume under `sessions`
+(`train_seconds_total` is their sum). The logged training loss is multiplied by the
+gradient-accumulation factor; divide by it when plotting.
 
 Running a command again resumes it from its last checkpoint. A checkpoint is written
 after each validation pass, so stopping in the middle of one loses the steps since
@@ -306,6 +313,42 @@ forms and case). Nothing is transliterated, so a word in the wrong script is an 
 | `devanagari_share` | Share of output words in Devanagari |
 
 Intervals are 95% bootstrap intervals over speaker groups.
+
+### Checking the normaliser
+
+The normaliser (`NORMALISER_VERSION` in `ml/eval/text.py`) is checked once, by the
+rules below, which were written down before any output they refer to was read. It is
+frozen, and its commit recorded, before our model is run on the test set. Each
+output file records the code revision it was made with.
+
+Evidence, in this order:
+
+1. The benchmark's own references: the Gemini draft (`gemini_text`) against the
+   human-corrected text (`text`) shows which conventions the annotators changed.
+   No system is involved.
+2. The test outputs of all baseline systems, pooled: the 50 most common
+   substitutions per system on US-CS, 20 on US-Std and US-EngPk, and 100 for the
+   drafts against the references, each tagged A, B, C or D below.
+3. The validation outputs of our model, only to find character encodings that the
+   baselines do not produce. Our model's test outputs are not read before the freeze,
+   and no rule is judged by its effect on our own score.
+
+| Class | Meaning | Rule |
+|---|---|---|
+| A | Same text in different Unicode (precomposed against combining forms, Arabic against Urdu code points, Latin accents) | Adopt |
+| B | Two accepted spellings of one word that never distinguish two words (thousands commas, a word-final hamza, a zero-width non-joiner as a word break, runs of single Latin letters) | Adopt only if all hold: both forms occur in the human references or in a cited reference work; the pair occurs in the pooled output of at least two systems; merging them makes no two distinct words that each occur at least 5 times in the references identical; it changes the US-CS WER of at least one system by 0.2 points or affects 100 reference words |
+| C | Writing conventions: digits against spelt-out numbers, word spacing, symbols read as words, hyphenated compounds | Not normalised; covered by the sensitivity analyses below |
+| D | A different word or inflection, aspiration, or the wrong script (for example ہ against ھ, ی against ے, ی against ئ) | Never normalised |
+
+Every change applies to every system and is decided on the pooled counts. A rule that
+passes is adopted even if it lowers our score, and one that fails is rejected even
+if it would raise it. A change bumps `NORMALISER_VERSION`, is listed here with its
+counts, and every system is rescored under both versions.
+
+Sensitivity analyses reported next to the main table: WER under the previous and the
+final version and under a minimal normaliser (NFKC, punctuation and case only); CER
+with all spaces removed; WER on the clips whose reference contains no digits; and each
+system's rank under each.
 
 ## Tested so far
 
