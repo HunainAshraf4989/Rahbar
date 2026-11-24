@@ -233,3 +233,23 @@ played. Errors never expose provider response bodies or credentials.
 Supported events: session resume, lesson controls, typed questions, speech start/end, audio input,
 turn cancel and playback acknowledgments. Other catalog events return an error.
 Viva and authentication are not implemented by these endpoints.
+
+## Volatile lesson conversation
+
+Delivered question/answer pairs live in process memory, scoped by session, content
+release and lesson. The latest four pairs are supplied to subsequent turns. They
+are not part of persisted `SessionState`, SQLite rows or PostgreSQL session rows.
+A playback-ended acknowledgement after playback-started records the answer;
+cancelled, failed and interrupted replies do not become delivered context.
+
+A brief reconnect to the same session retains that context. Thirty minutes of
+inactivity expires it; a server restart also clears it. The single-worker gateway
+owns this memory. Multiple workers require session affinity or a separately chosen
+volatile store before deployment; this implementation does not promise cross-worker
+continuity.
+
+`DELETE /dev/lecture/sessions/{session_id}/conversation` closes the active
+connection and clears the session's in-memory conversation. It leaves existing
+lesson cursor/progress metadata intact. These remain local development routes,
+not authenticated production endpoints. Full-corpus follow-up planning and spoken
+clarification still require integration with the shared answer service.

@@ -403,3 +403,35 @@ def test_stalled_audio_transport_pauses_without_advancing(prepared):
         assert store.get(state.session_id).paused
         assert store.get(state.session_id).cursor.revision == 0
     asyncio.run(run())
+
+
+def test_lesson_history_tracks_only_played_answers_and_survives_reconnect(prepared):
+    pipeline, _, directory, calls, _ = prepared
+    app = create_app(pipeline, lecture_directory=directory)
+    with TestClient(app) as client:
+        sid = session(client)
+        with client.websocket_connect(f"/dev/lecture/sessions/{sid}/events") as ws:
+            player = Player(ws)
+            player.send('question.text', {'text': 'coil کیا کرتی ہے؟'}, turn_id='first')
+            end = player.audio()[-1]
+            assert player.read()['type'] == 'turn.completed'
+            conversation = app.state.lecture.conversations.get(sid, 'relay-demo-v1', 'relay-demo')
+            assert conversation.snapshot() == ()
+            player.ack(end, 'playback.started')
+            player.ack(end)
+            assert player.read()['type'] == 'session.state'
+            assert len(conversation.snapshot()) == 1
+        with client.websocket_connect(f"/dev/lecture/sessions/{sid}/events") as ws:
+            player = Player(ws)
+            player.send('question.text', {'text': 'What does it do?'}, turn_id='followup')
+            end = player.audio()[-1]
+            assert player.read()['type'] == 'turn.completed'
+            request = [r for r in calls if r.url.path.endswith(':generateContent')][-1]
+            payload = json.loads(json.loads(request.content)['contents'][0]['parts'][0]['text'])
+            assert payload['history'][0]['question'] == 'coil کیا کرتی ہے؟'
+            player.ack(end, 'playback.interrupted')
+            assert player.read()['type'] == 'session.state'
+            assert len(conversation.snapshot()) == 1
+        assert 'coil کیا کرتی ہے؟' not in (directory/'sessions.sqlite3').read_bytes().decode('utf-8', errors='ignore')
+        assert client.delete(f'/dev/lecture/sessions/{sid}/conversation').status_code == 204
+        assert not conversation.snapshot()

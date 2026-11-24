@@ -10,6 +10,7 @@ from fastapi.responses import FileResponse
 from rahbar.contracts.models import AssetManifest, PreparedLesson, SessionCreate, SessionState
 from rahbar.engine.audio import InputError
 from rahbar.engine.bake import cached_pcm
+from rahbar.engine.conversation import LessonConversations
 from rahbar.engine.lesson import relay_asset, relay_lesson
 from rahbar.engine.pipeline import Pipeline
 from rahbar.engine.sessions import LectureConnection, SessionStore
@@ -42,6 +43,7 @@ class LectureGateway:
                             for view in self.asset.views for url in (view.image, view.overlay)}
         self.store = store if store is not None else SessionStore(directory / "sessions.sqlite3")
         self.connections: dict[str, LectureConnection] = {}
+        self.conversations = LessonConversations()
 
     async def state(self, session_id: str) -> SessionState:
         try:
@@ -98,6 +100,16 @@ def register_lecture_routes(app: FastAPI) -> None:
     async def session(session_id: str, request: Request) -> SessionState:
         return await gateway(request).state(session_id)
 
+    @router.delete("/dev/lecture/sessions/{session_id}/conversation", status_code=204)
+    async def end_conversation(session_id: str, request: Request) -> None:
+        service = gateway(request)
+        await service.state(session_id)
+        connection = service.connections.get(session_id)
+        if connection is not None:
+            await connection.close()
+            await connection.socket.close(code=1000)
+        service.conversations.end(session_id)
+
     @router.websocket("/dev/lecture/sessions/{session_id}/events")
     async def events(socket: WebSocket, session_id: str) -> None:
         try:
@@ -111,8 +123,11 @@ def register_lecture_routes(app: FastAPI) -> None:
         if previous is not None:
             await previous.close()
             await previous.socket.close(code=1000)
-        connection = LectureConnection(socket, await service.state(session_id), service.store,
-                                       service.lesson, service.directory, service.pipeline)
+        state = await service.state(session_id)
+        conversation = service.conversations.get(session_id, state.context.content_version,
+                                                 state.context.lesson_id)
+        connection = LectureConnection(socket, state, service.store,
+                                       service.lesson, service.directory, service.pipeline, conversation)
         service.connections[session_id] = connection
         try:
             await connection.run()

@@ -29,6 +29,7 @@ class TurnContext:
     generation: int
     connection_epoch: str
     cancelled: Event
+    history: tuple[tuple[str, str], ...] = ()
 
 
 class STTPort(Protocol):

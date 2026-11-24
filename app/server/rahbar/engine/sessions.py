@@ -27,6 +27,7 @@ from rahbar.contracts.models import (
 from rahbar.contracts.ports import TurnContext
 from rahbar.engine.audio import InputError, pcm_to_wav
 from rahbar.engine.bake import cached_pcm
+from rahbar.engine.conversation import LessonConversation
 from rahbar.engine.pipeline import Pipeline
 from rahbar.engine.runtime import ProviderError
 
@@ -76,13 +77,16 @@ class PlaybackTicket:
     resume_lesson: bool = True
     started: bool = False
     sent: bool = False
+    conversation_turn: tuple[str, str] | None = None
 
 
 class LectureConnection:
     def __init__(self, socket: WebSocket, state: SessionState, store: SessionStore,
-                 lesson: PreparedLesson, directory: Path, pipeline: Pipeline) -> None:
+                 lesson: PreparedLesson, directory: Path, pipeline: Pipeline,
+                 conversation: LessonConversation | None = None) -> None:
         self.socket, self.state, self.store = socket, state, store
         self.lesson, self.directory, self.pipeline = lesson, directory, pipeline
+        self.conversation = conversation if conversation is not None else LessonConversation()
         self.context: TurnContext | None = None
         self.task: asyncio.Task[None] | None = None
         self.ticket: PlaybackTicket | None = None
@@ -166,7 +170,7 @@ class LectureConnection:
         self.cancel()
         await self.save(generation=self.state.generation + 1, paused=listening)
         self.context = TurnContext(self.state.session_id, turn_id, self.state.generation,
-                                   self.state.connection_epoch, asyncio.Event())
+                                   self.state.connection_epoch, asyncio.Event(), self.conversation.snapshot())
         self.listening = listening
         await self.emit("turn.started", {}, self.context)
         return self.context
@@ -195,10 +199,12 @@ class LectureConnection:
                 await self.error("lecture_audio_unavailable")
 
     async def audio(self, sentence: ApprovedSentence, pcm: bytes,
-                    kind: str, context: TurnContext, *, resume_lesson: bool = True) -> None:
+                    kind: str, context: TurnContext, *, resume_lesson: bool = True,
+                    conversation_turn: tuple[str, str] | None = None) -> None:
         if context is not self.context or context.cancelled.is_set():
             return
-        ticket = PlaybackTicket(sentence.sentence_id, uuid4().hex, kind, resume_lesson)
+        ticket = PlaybackTicket(sentence.sentence_id, uuid4().hex, kind, resume_lesson,
+                                conversation_turn=conversation_turn)
         self.ticket = ticket
         public = ApprovedSentence.model_validate(sentence.model_dump(exclude={"audio"}))
         if not self.state.capabilities.visuals:
@@ -240,7 +246,8 @@ class LectureConnection:
                 target = next((segment.visual_target for segment in self.lesson.sentences
                                if segment.evidence_ids == sentence.evidence_ids), None)
                 sentence = sentence.model_copy(update={"visual_target": target})
-            await self.audio(sentence, pcm, "answer", context, resume_lesson=resume_lesson)
+            await self.audio(sentence, pcm, "answer", context, resume_lesson=resume_lesson,
+                             conversation_turn=(result.transcript, sentence.canonical_text))
             await self.emit("turn.completed", dict(outcome=result.outcome,
                 restart_sentence_id=self.state.cursor.restart_sentence_id), context)
         except (InputError, ProviderError, TimeoutError) as exc:
@@ -365,6 +372,8 @@ class LectureConnection:
                         "visual_context": (sentence.visual_target
                                            if self.state.capabilities.visuals else None)}))
             elif ticket.started and ticket.sent:
+                if ticket.conversation_turn is not None:
+                    self.conversation.delivered(*ticket.conversation_turn)
                 self.ticket = None
                 if ticket.kind == "lesson":
                     index = next(i for i, s in enumerate(self.lesson.sentences)
