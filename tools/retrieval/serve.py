@@ -26,7 +26,7 @@ settings = load_retrieval_settings(args.project_root)
 index = HybridIndex(args.directory, args.revision, args.url)
 client = httpx.AsyncClient()
 service = AnswerService(GeminiRouter(client, settings.gemini_api_key, list(settings.models)),
-                        lambda q, k: index.search(q, k, reviewed_only=True))
+                        lambda q, k: index.search(q, k, reviewed_only=False))
 store = (PostgresTextSessions(load_supabase_settings(args.project_root).database_url)
          if args.storage == 'postgres' else TextSessions(args.directory/'text-sessions.sqlite'))
 app = create_text_app(service, store, index.collection)

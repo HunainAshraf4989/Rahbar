@@ -43,10 +43,12 @@ class Pipeline:
     def __init__(self, stt: STTPort, retrieval: RetrievalPort, generation: GenerationPort,
                  checker: ResponseChecker, normalizer: Normalizer, tts: TTSPort,
                  observer: Callable[[str, dict[str, object]], None] | None = None,
-                 *, log_path: Path = Path('.cache/logs/pipeline.jsonl')) -> None:
+                 *, index_version: str = 'dummy-v1',
+                 log_path: Path = Path('.cache/logs/pipeline.jsonl')) -> None:
         self.stt, self.retrieval, self.generation = stt, retrieval, generation
         self.checker, self.normalizer, self.tts = checker, normalizer, tts
         self.observer = observer
+        self.index_version = index_version
         self.log = PipelineLog(log_path)
 
     def observe(self, stage: str, data: dict[str, object]) -> None:
@@ -61,7 +63,7 @@ class Pipeline:
 
     async def _run_cancellable(self, question_input: bytes | str, teaching: TeachingContext,
                                context: TurnContext) -> TurnResult:
-        trace = self.log.turn(context, 'dummy-v1',
+        trace = self.log.turn(context, self.index_version,
                               'audio' if isinstance(question_input, bytes) else 'text')
         work = cancelled = None
         try:
@@ -111,12 +113,13 @@ class Pipeline:
         stage = perf_counter()
         request = RetrievalRequest(
             canonical_text=question.text, course_id=teaching.course_id,
-            content_version=teaching.content_version, index_version="dummy-v1",
+            content_version=teaching.content_version, index_version=self.index_version,
             unit_id=teaching.unit_id, turn_id=context.turn_id,
             hypothesis_revision=hypothesis_revision, final=True,
         )
         trace.stage('retrieval')
         evidence = await self.retrieval.retrieve(request, context)
+        check_cancelled(context)
         if evidence.request != request:
             raise InputError("Retrieval returned stale or mismatched evidence")
         self.observe("retrieval", evidence.model_dump())
