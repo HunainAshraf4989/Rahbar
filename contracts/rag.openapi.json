@@ -90,10 +90,13 @@
         "properties": {
           "passage_id": {
             "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
             "title": "Passage Id"
           },
           "quote": {
             "type": "string",
+            "maxLength": 4000,
             "minLength": 1,
             "title": "Quote"
           }
@@ -123,6 +126,7 @@
         "properties": {
           "text": {
             "type": "string",
+            "maxLength": 2000,
             "minLength": 1,
             "title": "Text"
           },
@@ -131,6 +135,7 @@
               "$ref": "#/components/schemas/Citation"
             },
             "type": "array",
+            "maxItems": 10,
             "minItems": 1,
             "title": "Citations"
           }

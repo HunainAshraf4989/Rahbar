@@ -80,10 +80,13 @@
       "additionalProperties": false,
       "properties": {
         "passage_id": {
+          "maxLength": 200,
+          "minLength": 1,
           "title": "Passage Id",
           "type": "string"
         },
         "quote": {
+          "maxLength": 4000,
           "minLength": 1,
           "title": "Quote",
           "type": "string"
@@ -100,6 +103,7 @@
       "additionalProperties": false,
       "properties": {
         "text": {
+          "maxLength": 2000,
           "minLength": 1,
           "title": "Text",
           "type": "string"
@@ -108,6 +112,7 @@
           "items": {
             "$ref": "#/$defs/Citation"
           },
+          "maxItems": 10,
           "minItems": 1,
           "title": "Citations",
           "type": "array"
