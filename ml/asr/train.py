@@ -56,7 +56,7 @@ def select_rows(args: argparse.Namespace, processor: WhisperProcessor) -> tuple[
         if row["split"] not in (args.train_split, "val") or row["subset"] not in args.subsets:
             continue
         if labels is not None and row["split"] == args.train_split:
-            if not normalise(labels.get(row["id"], "")):
+            if not normalise(labels.get(row["id"], ""), "1"):
                 left_out["no_label"] += 1
                 continue
             row["text"] = labels[row["id"]]
@@ -298,8 +298,9 @@ def main() -> None:
                                                       skip_special_tokens=True)
         save_validation_outputs(out / "validation", trainer.state.global_step, val_rows,
                                 references, hypotheses)
-        keep =[i for i, r in enumerate(references) if normalise(r)]
-        counts = clip_counts([references[i] for i in keep], [hypotheses[i] for i in keep])
+        # checkpoint selection stays on normaliser version 1, as in seed 0
+        keep = [i for i, r in enumerate(references) if normalise(r, "1")]
+        counts = clip_counts([references[i] for i in keep], [hypotheses[i] for i in keep], "1")
         return {k: float(v) for k, v in rates(counts.sum(axis=0)).items()}
 
     use_gpu = torch.cuda.is_available()

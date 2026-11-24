@@ -165,7 +165,7 @@ def load_rows(raw: Path) -> tuple[list[dict], Counter]:
                 dropped["no_audio_file"] += 1
             elif raw_audio in seen:
                 dropped["duplicate_row"] += 1
-            elif not normalise(text):
+            elif not normalise(text, "1"):  # the data pipeline stays on normaliser version 1
                 dropped["empty_text"] += 1
             else:
                 seen.add(raw_audio)
@@ -191,7 +191,7 @@ def load_rows(raw: Path) -> tuple[list[dict], Counter]:
 
 
 def shingles(text: str) -> set[str]:
-    words = normalise(text).split()
+    words = normalise(text, "1").split()  # pinned: the split was made under version 1
     if len(words) < SHINGLE:
         return {" ".join(words)} if len(words) >= 4 else set()
     return {" ".join(words[i:i + SHINGLE]) for i in range(len(words) - SHINGLE + 1)}

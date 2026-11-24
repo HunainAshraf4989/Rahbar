@@ -24,7 +24,7 @@ import numpy as np
 from ml.asr.data import read_jsonl
 from ml.eval.metrics import clip_counts, paired_difference, summarise
 from ml.eval.sanity import checks, warnings
-from ml.eval.text import NORMALISER_VERSION, normalise
+from ml.eval.text import NORMALISER_VERSION, VERSIONS, normalise
 
 SHOWN = ("wer", "ins_rate", "cer", "ur_wer", "en_wer", "en_script_kept", "en_exact",
          "latin_share", "devanagari_share")
@@ -53,6 +53,8 @@ def main() -> None:
                    help="allow systems transcribed under different protocols in one table")
     p.add_argument("--common-clean", action="store_true",
                    help="score only clips on which no listed system loops or runs over")
+    p.add_argument("--normaliser", choices=VERSIONS, default=NORMALISER_VERSION,
+                   help="text normaliser version (default: the current one)")
     p.add_argument("--out", type=Path, help="results file (default DATA/results/<split>.json)")
     args = p.parse_args()
 
@@ -82,12 +84,12 @@ def main() -> None:
         print(f"WARNING: scoring {len(scored)} of {len(rows)} clips; "
               "the rest lack a hypothesis from at least one system")
 
-    results = {"split": args.split, "normaliser": NORMALISER_VERSION,
+    results = {"split": args.split, "normaliser": args.normaliser,
                "max_seconds": args.max_seconds, "common_clean": args.common_clean,
                "settings": settings, "subsets": {}}
     for subset in sorted({r["subset"] for r in scored}):
         part = [r for r in scored if r["subset"] == subset]
-        found = {s: checks(part, hyps[s]) for s in args.systems}
+        found = {s: checks(part, hyps[s], args.normaliser) for s in args.systems}
         if args.common_clean:  # the same clips for every system: those no system loops on
             bad = np.any([found[s]["per_clip"]["flagged"] for s in args.systems], axis=0)
             print(f"\n{subset}: keeping {int((~bad).sum())} of {len(part)} clips on which no "
@@ -95,11 +97,11 @@ def main() -> None:
             part = [r for r, b in zip(part, bad) if not b]
             if not part:
                 continue
-            found = {s: checks(part, hyps[s]) for s in args.systems}
+            found = {s: checks(part, hyps[s], args.normaliser) for s in args.systems}
         groups = [r["group"] for r in part]
         references = [r["text"] for r in part]
-        counts = {s: clip_counts(references, [hyps[s][r["id"]]["text"] for r in part])
-                  for s in args.systems}
+        counts = {s: clip_counts(references, [hyps[s][r["id"]]["text"] for r in part],
+                                 args.normaliser) for s in args.systems}
         entry = {"clips": len(part), "systems": {}, "warnings": {}}
         print(f"\n{subset}: {len(part)} clips, {sum(r['duration'] for r in part) / 3600:.2f} h")
         print("| system | " + " | ".join(SHOWN) + " |")

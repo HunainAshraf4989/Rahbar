@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from ml.eval.metrics import COUNTS, clip_counts, paired_difference, rates, summarise
-from ml.eval.text import normalise, script
+from ml.eval.text import VERSIONS, WORD_VARIANTS, normalise, script
 
 
 def one(reference: str, hypothesis: str) -> dict[str, int]:
@@ -21,6 +21,51 @@ def test_normalise_removes_only_non_recognition_differences():
 def test_normalise_never_changes_script():
     assert normalise("ریلے") != normalise("relay")
     assert normalise("रिले") == "रिले"
+
+
+def test_version_two_scores_listed_spellings_as_one_word():
+    for old, new in WORD_VARIANTS.items():
+        assert normalise(old, "1") == old and normalise(new, "1") == new  # already version-1 form
+        assert normalise(old, "2") == new
+        assert normalise(f"یہ {old} ہے", "1") != normalise(f"یہ {new} ہے", "1")
+        assert normalise(f"یہ {old} ہے", "2") == normalise(f"یہ {new} ہے", "2")
+    assert normalise("اس کے لئے", "2") == normalise("اس کے لیے", "2")
+    assert normalise("پتا", "2") == normalise("پتہ", "2")
+    assert normalise("گھر پے", "2") == normalise("گھر پہ", "2")
+    assert one("اس کے لیے", "اس کے لئے")["word_errors"] == 0
+    assert dict(zip(COUNTS, clip_counts(["اس کے لیے"], ["اس کے لئے"], "1")[0].tolist()))[
+        "word_errors"] == 1
+
+
+@pytest.mark.parametrize(
+    ("a", "b"),
+    [("کہا", "کہہ"), ("جگہ", "جگا"), ("بچہ", "بچا"), ("سارا", "سارہ"), ("تیرا", "تیرہ"),
+     ("منہ", "منا"), ("ذرا", "ذرہ"), ("جائے", "جائیے"), ("گئے", "گیے"), ("مزہ", "مزا"),
+     ("ڈرامہ", "ڈراما"), ("اپ", "آپ"), ("پہ", "پر"), ("ہے", "ہیں"), ("کی", "کے"),
+     ("ہ", "ھ"), ("کیے", "کئے"), ("دیے", "دیئے")],
+)
+def test_version_two_keeps_different_words_apart(a, b):
+    assert normalise(a, "2") != normalise(b, "2")
+
+
+def test_version_two_folds_latin_accents_only():
+    assert normalise("Café", "1") == "café" and normalise("Café", "2") == "cafe"
+    assert script(normalise("Café")) == "latin"
+    assert normalise("اُردُو", "2") == "اردو"
+    assert normalise("रिले", "2") == "रिले"
+    assert normalise("کےلئے", "2") == normalise("کےلئے", "1")  # whole words only
+
+
+def test_normalising_twice_changes_nothing():
+    for text in ["یہ relay ہے، اس کے لئے café پتا پے", "Tom's café, ۱۲ volt ١٢", "रिले यह है", ""]:
+        for version in VERSIONS:
+            once = normalise(text, version)
+            assert normalise(once, version) == once
+
+
+def test_unknown_normaliser_version_is_refused():
+    with pytest.raises(ValueError):
+        normalise("یہ ہے", "3")
 
 
 @pytest.mark.parametrize(

@@ -15,7 +15,7 @@ from collections.abc import Sequence
 import jiwer
 import numpy as np
 
-from ml.eval.text import normalise, script
+from ml.eval.text import NORMALISER_VERSION, normalise, script
 
 COUNTS = (
     "ref_words", "word_errors", "ref_chars", "char_errors",
@@ -26,10 +26,11 @@ COUNTS = (
 )
 
 
-def clip_counts(references: Sequence[str], hypotheses: Sequence[str]) -> np.ndarray:
+def clip_counts(references: Sequence[str], hypotheses: Sequence[str],
+                version: str = NORMALISER_VERSION) -> np.ndarray:
     """Return one row of COUNTS per clip. References must be non-empty after normalising."""
-    refs = [normalise(r) for r in references]
-    hyps = [normalise(h) for h in hypotheses]
+    refs = [normalise(r, version) for r in references]
+    hyps = [normalise(h, version) for h in hypotheses]
     if not all(refs):
         raise ValueError("empty reference after normalisation")
     words = jiwer.process_words(refs, hyps)

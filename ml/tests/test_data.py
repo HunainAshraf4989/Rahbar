@@ -39,6 +39,13 @@ def test_overlap_removes_only_clips_that_share_a_run_of_words():
     assert [r.get("split") for r in corpus] == ["excluded", None, None]
 
 
+def test_split_check_stays_on_normaliser_version_one():
+    from ml.asr.data import shingles
+
+    text = "یہ بات ہم نے اس کے لئے کہی تھی اور سب نے سنی تھی آج اسی لیے لکھ دی ہے"
+    assert any("لئے" in s.split() for s in shingles(text))  # version 2 would have rewritten it
+
+
 def test_short_clip_must_match_whole_text():
     benchmark = [{"text": "یہ بالکل ٹھیک بات ہے", "gemini_text": ""}]
     corpus = [corpus_row(0, 1, "یہ بالکل ٹھیک بات ہے۔"), corpus_row(1, 1, "یہ بالکل ٹھیک")]

@@ -23,7 +23,7 @@ import numpy as np
 
 from ml.asr.data import read_jsonl
 from ml.eval.metrics import COUNTS, clip_counts
-from ml.eval.text import normalise
+from ml.eval.text import NORMALISER_VERSION, VERSIONS, normalise
 
 STRAY = re.compile(r"<\|[^|>]*\|>|</?s>|<unk>|<pad>|\[[A-Z_]+\]|�")
 LOOP_TIMES = 5
@@ -50,10 +50,10 @@ def foreign_letters(text: str) -> bool:
         ("LATIN", "ARABIC", "DEVANAGARI")) for c in text)
 
 
-def checks(rows: list[dict], hyps: dict[str, dict]) -> dict:
+def checks(rows: list[dict], hyps: dict[str, dict], version: str = NORMALISER_VERSION) -> dict:
     """Per-clip flags and totals for one system on one subset."""
     outputs = [hyps[r["id"]]["text"] for r in rows]
-    counts = clip_counts([r["text"] for r in rows], outputs)
+    counts = clip_counts([r["text"] for r in rows], outputs, version)
     ref = counts[:, COUNTS.index("ref_words")]
     out = counts[:, COUNTS.index("hyp_words")]
     errors = counts[:, COUNTS.index("word_errors")]
@@ -63,7 +63,7 @@ def checks(rows: list[dict], hyps: dict[str, dict]) -> dict:
     flags = {
         "over_3x": out > 3 * ref,
         "hit_cap": capped,
-        "loop": np.array([has_loop(normalise(o).split()) for o in outputs]),
+        "loop": np.array([has_loop(normalise(o, version).split()) for o in outputs]),
         "compressible": np.array([compression_ratio(o) > 2.4 for o in outputs]),
         "empty": out == 0,
         "stray": np.array([bool(STRAY.search(o)) for o in whole]),
@@ -85,7 +85,8 @@ def checks(rows: list[dict], hyps: dict[str, dict]) -> dict:
     }
 
 
-def orthography(rows: list[dict], hyps: dict[str, dict]) -> dict:
+def orthography(rows: list[dict], hyps: dict[str, dict],
+                version: str = NORMALISER_VERSION) -> dict:
     """Error sources that are writing conventions rather than recognition errors.
 
     spacing: two reference words written as one output word, or one written as two
@@ -94,8 +95,8 @@ def orthography(rows: list[dict], hyps: dict[str, dict]) -> dict:
     """
     import jiwer
 
-    refs = [normalise(r["text"]) for r in rows]
-    outs = [normalise(hyps[r["id"]]["text"]) for r in rows]
+    refs = [normalise(r["text"], version) for r in rows]
+    outs = [normalise(hyps[r["id"]]["text"], version) for r in rows]
     spacing = numbers = words = 0
     for ref, out in zip(refs, outs):
         rw, ow = ref.split(), out.split()
@@ -165,6 +166,8 @@ def main() -> None:
     p.add_argument("--systems", nargs="+", required=True)
     p.add_argument("--worst", type=int, default=10, help="worst clips listed per subset")
     p.add_argument("--hyps", type=Path, help="folder of hypothesis files (default DATA/hyps/SPLIT)")
+    p.add_argument("--normaliser", choices=VERSIONS, default=NORMALISER_VERSION,
+                   help="text normaliser version (default: the current one)")
     p.add_argument("--confusions", type=int, metavar="N",
                    help="also report spacing and number conventions and the N most common "
                         "substitutions, written to DATA/results/confusions-<split>-<system>.tsv")
@@ -181,7 +184,7 @@ def main() -> None:
         lines = ["subset\tid\tseconds\tref_words\tout_words\terrors\tflags\treference\toutput"]
         for subset in sorted({r["subset"] for r in scored}):
             part = [r for r in scored if r["subset"] == subset]
-            result = checks(part, hyps)
+            result = checks(part, hyps, args.normaliser)
             show(system, subset, result)
             new = worst_lines(subset, part, hyps, result, args.worst)
             lines += new
@@ -195,7 +198,8 @@ def main() -> None:
         if args.confusions:
             table = ["subset\treference_word\toutput_word\tcount"]
             for subset in sorted({r["subset"] for r in scored}):
-                found = orthography([r for r in scored if r["subset"] == subset], hyps)
+                found = orthography([r for r in scored if r["subset"] == subset], hyps,
+                                    args.normaliser)
                 print(f"  {subset}: spacing differences {found['spacing_per_100_words']:.1f} per "
                       f"100 reference words; digits on one side only in "
                       f"{100 * found['number_mismatch_share']:.1f}% of clips")

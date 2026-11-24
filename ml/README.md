@@ -300,6 +300,9 @@ on Windows; its decoding is the package's own and is recorded as such.
 
 Text is normalised before scoring (punctuation, diacritics, letter variants, digit
 forms and case). Nothing is transliterated, so a word in the wrong script is an error.
+Version 2 of the normaliser (the default; `--normaliser 1` gives the earlier one in
+`score` and `sanity`) also drops accents on Latin letters and scores a few spellings of
+one word as one, as listed in the decision log below.
 
 | Column | Meaning |
 |---|---|
@@ -349,6 +352,52 @@ Sensitivity analyses reported next to the main table: WER under the previous and
 final version and under a minimal normaliser (NFKC, punctuation and case only); CER
 with all spaces removed; WER on the clips whose reference contains no digits; and each
 system's rank under each.
+
+#### Decision log: normaliser version 2
+
+The check was run on the 4,170 benchmark references, the Gemini drafts, and the test
+outputs of 14 baseline systems (12 Whisper runs, MMS, Seamless), after the rules above
+were committed (`8242bb3`). Version 1 stays available (`normalise(text, "1")`,
+`--normaliser 1`); the data split and the validation curves during training are pinned
+to it, so the split fingerprint and the checkpoint selection do not change. Nothing
+else in the pipeline changes with the version.
+
+Adopted. "Reference words" counts the reference words written in any form of the pair.
+The four large pairs are each substituted by 12 of the 14 systems; دیجیے by 11, کیجیے by
+9 and لیجیے by 4.
+
+| Class | Rule | Reference words | Largest US-CS WER change, any system |
+|---|---|---|---|
+| A | Accents on Latin letters are dropped (café, cafe) | 1 (34 to 81 output words in four auto-language runs) | 0.000 points |
+| B | لئے, لیئے are scored as لیے (342 : 23 in the references) | 365 | 0.188 points |
+| B | چاہئے, چاہیئے, چاہئیے as چاہیے (164 : 1 : 1) | 166 | 0.065 |
+| B | دیجئے as دیجیے (13 : 2), لیجئے as لیجیے (7 : 4), کیجئے as کیجیے (1 : 5) | 32 | below 0.01 |
+| B | پتا as پتہ (119 : 90) | 209 | 0.062 |
+| B | پے as پہ (565 : 20; all 20 mean "on") | 585 | 0.127 |
+
+The size condition is met through the 100 reference words, not through the 0.2-point
+alternative: by پتہ/پتا and پہ/پے on their own, and by the -ئے/-یے family as one rule
+(five members, 563 reference words together). Both spellings of every adopted pair occur
+in the human references, so no reference work is cited. The other members of the same family
+(کیے/کئے, دیے/دیئے, دیکھیے, رکھیے, اٹھیے, بیٹھیے, بنیے) have a second form that does not
+occur in the references; they are not adopted, and each would change a WER by at most
+0.004 points. The grouping of the -ئے/-یے family was set after reading the pooled
+baseline confusions and before the counts were run.
+
+Rejected, with the failed condition: جائے/جائیے and گئے/گیے (different words;
+condition 3 and 1); کہا/کہہ, جگہ/جگا, بچہ/بچا, سارا/سارہ, تیرا/تیرہ, منہ/منا, ذرا/ذرہ,
+رویہ/رویا, کرایہ/کرایا, بدلہ/بدلا, گلہ/گلا, میلہ/میلا (two words; condition 3);
+مزہ/مزا, بندہ/بندا, دفعہ/دفعا, بیچارہ/بیچارا, صبا/صباء (below 100 reference words);
+ڈرامہ/ڈراما, گھنٹہ/گھنٹا, دوپٹہ/دوپٹا (one form absent from the references and below
+100 words; a family of loanwords was not pre-registered, so none is created now);
+misspellings that occur only in outputs (ہوتہ, کرنہ, کرتہ, لگتہ, بلکل); and the
+different words پہ/پر, اپ/آپ, ہے/ہیں, کی/کے, ہ/ھ, ی/ے, ئ/ی.
+
+Not needed: the references contain no zero-width non-joiner, no Arabic-Indic or Persian
+digits, no thousands commas, decimals or currency symbols, and the ی plus combining
+hamza encoding occurs nowhere (the precomposed ئ is used throughout); apostrophes are
+deleted on both sides already. Script differences (Devanagari or Roman Urdu for Urdu,
+English written in Urdu script) are recognition errors and are not normalised.
 
 ## Tested so far
 
