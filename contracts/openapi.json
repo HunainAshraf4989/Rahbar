@@ -300,7 +300,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Credentials"
+                "$ref": "#/components/schemas/Registration"
               }
             }
           }
@@ -1933,6 +1933,32 @@
             "minLength": 1,
             "title": "Email",
             "type": "string"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Full Name"
+          },
+          "phone_number": {
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Phone Number"
           }
         },
         "required": [
@@ -4738,6 +4764,42 @@
           "choices"
         ],
         "title": "QuizSubmit",
+        "type": "object"
+      },
+      "Registration": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "minLength": 1,
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "format": "password",
+            "title": "Password",
+            "type": "string",
+            "writeOnly": true
+          },
+          "full_name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Full Name",
+            "type": "string"
+          },
+          "phone_number": {
+            "maxLength": 40,
+            "minLength": 7,
+            "title": "Phone Number",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "full_name",
+          "phone_number"
+        ],
+        "title": "Registration",
         "type": "object"
       },
       "ReleaseContext": {

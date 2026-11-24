@@ -53,6 +53,8 @@ export function Platform({
     return value === null ? null : Number(value);
   });
   const [submitted, setSubmitted] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -81,7 +83,13 @@ export function Platform({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email.trim(), password }),
+          body: JSON.stringify({
+            email: email.trim(),
+            password,
+            ...(page === "signup"
+              ? { full_name: fullName.trim(), phone_number: phone.trim() }
+              : {}),
+          }),
         },
       );
       if (!response.ok) {
@@ -286,6 +294,20 @@ export function Platform({
           className="auth-form"
           onSubmit={(event) => void authenticate(event)}
         >
+          {page === "signup" && (
+            <label>
+              {t("Full name", "پورا نام")}
+              <input
+                type="text"
+                required
+                maxLength={120}
+                autoComplete="name"
+                dir="auto"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+              />
+            </label>
+          )}
           <label>
             {t("Email address", "ای میل")}
             <input
@@ -297,6 +319,30 @@ export function Platform({
               onChange={(event) => setEmail(event.target.value)}
             />
           </label>
+          {page === "signup" && (
+            <label>
+              {t("Phone number", "فون نمبر")}
+              <input
+                type="tel"
+                required
+                maxLength={40}
+                autoComplete="tel"
+                inputMode="tel"
+                dir="ltr"
+                aria-describedby="signup-phone-hint"
+                placeholder="+923001234567"
+                pattern={"\\+[1-9][0-9]{6,14}"}
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+              />
+              <span className="auth-hint" id="signup-phone-hint">
+                {t(
+                  "Use your WhatsApp number, including country code.",
+                  "واٹس ایپ نمبر ملک کے کوڈ کے ساتھ درج کریں۔",
+                )}
+              </span>
+            </label>
+          )}
           <label htmlFor="account-password">{t("Password", "پاس ورڈ")}</label>
           <div className="password-field">
             <input
@@ -375,8 +421,8 @@ export function Platform({
                     )
                   : error === 422
                     ? t(
-                        "Check the email and password fields.",
-                        "ای میل اور پاس ورڈ چیک کریں۔",
+                        "Check your details and include the country code in your phone number.",
+                        "اپنی معلومات چیک کریں اور فون نمبر میں ملک کا کوڈ شامل کریں۔",
                       )
                     : t(
                         "Account service is unavailable. Try again later.",
