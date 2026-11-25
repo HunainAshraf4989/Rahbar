@@ -659,7 +659,7 @@ function App() {
     );
 
   const accountLabel =
-    account?.email.split("@")[0] ?? (ur ? "لاگ ان" : "Log in");
+    account?.full_name ?? account?.email.split("@")[0] ?? (ur ? "لاگ ان" : "Log in");
   return (
     <div className="workspace-layout" data-expanded={expanded}>
       <aside className="sidebar">

@@ -28,9 +28,16 @@ class Credentials(Model):
     password: SecretStr
 
 
+class Registration(Credentials):
+    full_name: str = Field(min_length=1, max_length=120)
+    phone_number: str = Field(min_length=7, max_length=40)
+
+
 class Account(Model):
     account_id: ID
     email: Text
+    full_name: Text | None = None
+    phone_number: Text | None = None
 
 
 class Curriculum(Model):
@@ -89,7 +96,7 @@ class WhatsAppWebhook(Model):
 OPERATIONS = [
     ("get", "/health/live", None, Health, 200, False),
     ("get", "/health/ready", None, Health, 200, False),
-    ("post", "/api/v1/auth/register", Credentials, Account, 201, False),
+    ("post", "/api/v1/auth/register", Registration, Account, 201, False),
     ("post", "/api/v1/auth/login", Credentials, Account, 200, False),
     ("post", "/api/v1/auth/logout", None, None, 204, False),
     ("get", "/api/v1/me", None, Account, 200, False),

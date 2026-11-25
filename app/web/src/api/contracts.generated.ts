@@ -61,6 +61,7 @@ export type Contract =
   | QuizItem
   | QuizResult
   | QuizSubmit
+  | Registration
   | ReleaseContext
   | Resume
   | RetrievalRequest
@@ -101,6 +102,8 @@ export type Contract =
   | WhatsAppWebhook;
 export type AccountId = string;
 export type Email = string;
+export type FullName = string | null;
+export type PhoneNumber = string | null;
 export type SentenceId = string;
 export type CanonicalText = string;
 export type EvidenceIds = string[];
@@ -408,6 +411,10 @@ export type Feedback1 = string;
 export type UnitId9 = string;
 export type ContentVersion11 = string;
 export type AssessmentVersion4 = string;
+export type Email2 = string;
+export type Password1 = string;
+export type FullName1 = string;
+export type PhoneNumber1 = string;
 export type ApprovedPrefix = string[];
 export type PlayedPrefix = string[];
 export type ProcedureId = string | null;
@@ -590,6 +597,8 @@ export type Entry = {
 export interface Account {
   account_id: AccountId;
   email: Email;
+  full_name?: FullName;
+  phone_number?: PhoneNumber;
 }
 export interface ApprovedSentence {
   sentence_id: SentenceId;
@@ -1041,6 +1050,12 @@ export interface QuizSubmit {
 }
 export interface Choices {
   [k: string]: string;
+}
+export interface Registration {
+  email: Email2;
+  password: Password1;
+  full_name: FullName1;
+  phone_number: PhoneNumber1;
 }
 export interface ReleaseContext {
   approved_prefix: ApprovedPrefix;

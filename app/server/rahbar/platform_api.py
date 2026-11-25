@@ -24,6 +24,7 @@ from pydantic import BaseModel, EmailStr, Field, SecretStr
 from rahbar.api import create_app
 from rahbar.config import load_supabase_settings
 from rahbar.contracts.http import Account
+from rahbar.registration import RegistrationCredentials
 
 COOKIE = "rahbar_session"
 SESSION_SECONDS = 8 * 3600
@@ -168,7 +169,7 @@ def create_platform_app(*, project_root: Path | None = None,
         return response
 
     @router.post("/auth/register", status_code=201)
-    def register(payload: Credentials, request: Request, response: Response) -> Account:
+    def register(payload: RegistrationCredentials, request: Request, response: Response) -> Account:
         require_origin(request)
         email = str(payload.email).lower()
         limit(request, "register", email)
@@ -180,12 +181,14 @@ def create_platform_app(*, project_root: Path | None = None,
                            "(principal_id, host_key, subject_key) VALUES (%s, 'web', %s)",
                            (principal, principal))
                 db.execute("INSERT INTO rahbar.learner_accounts "
-                           "(principal_id, email, password_hash) VALUES (%s, %s, %s)",
-                           (principal, email, encoded))
+                           "(principal_id, email, password_hash, full_name, phone_number) "
+                           "VALUES (%s, %s, %s, %s, %s)",
+                           (principal, email, encoded, payload.full_name, payload.phone_number))
                 issue_session(db, request, response, principal)
         except psycopg2.errors.UniqueViolation:
             raise HTTPException(409, "Unable to register this account") from None
-        return Account(account_id=str(principal), email=email)
+        return Account(account_id=str(principal), email=email,
+                       full_name=payload.full_name, phone_number=payload.phone_number)
 
     @router.post("/auth/login")
     def login(payload: Credentials, request: Request, response: Response) -> Account:
@@ -193,13 +196,13 @@ def create_platform_app(*, project_root: Path | None = None,
         email = str(payload.email).lower()
         limit(request, "login", email)
         with database() as db:
-            db.execute("SELECT principal_id, password_hash FROM rahbar.learner_accounts "
-                       "WHERE lower(email) = %s AND disabled_at IS NULL FOR UPDATE", (email,))
+            db.execute("SELECT principal_id, password_hash, full_name, phone_number "
+                       "FROM rahbar.learner_accounts WHERE lower(email) = %s AND disabled_at IS NULL FOR UPDATE", (email,))
             row = db.fetchone()
             if not verify(payload.password.get_secret_value(), row[1] if row else None) or not row:
                 raise HTTPException(401, "Email or password is incorrect")
             issue_session(db, request, response, row[0])
-        return Account(account_id=str(row[0]), email=email)
+        return Account(account_id=str(row[0]), email=email, full_name=row[2], phone_number=row[3])
 
     @router.get("/me")
     def me(request: Request) -> Account:
@@ -208,7 +211,7 @@ def create_platform_app(*, project_root: Path | None = None,
             raise HTTPException(401, "Sign in required")
         with database() as db:
             db.execute(
-                "SELECT a.principal_id, a.email FROM rahbar.auth_sessions s "
+                "SELECT a.principal_id, a.email, a.full_name, a.phone_number FROM rahbar.auth_sessions s "
                 "JOIN rahbar.learner_accounts a USING (principal_id) "
                 "WHERE s.token_digest = %s AND s.revoked_at IS NULL "
                 "AND s.expires_at > now() AND a.disabled_at IS NULL", (token_digest(token),)
@@ -216,7 +219,7 @@ def create_platform_app(*, project_root: Path | None = None,
             row = db.fetchone()
         if not row:
             raise HTTPException(401, "Sign in required")
-        return Account(account_id=str(row[0]), email=row[1])
+        return Account(account_id=str(row[0]), email=row[1], full_name=row[2], phone_number=row[3])
 
     @router.post("/auth/password", status_code=204)
     def change_password(payload: PasswordChange, request: Request, response: Response) -> None:

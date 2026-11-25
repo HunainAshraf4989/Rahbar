@@ -10,7 +10,7 @@ export function AccountSettings({ account, language, onExpired }: {
   const t = (en: string, ur: string) => language === 'ur' ? ur : en;
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState<number>();
-  const name = account.email.split('@')[0];
+  const name = account.full_name ?? account.email.split('@')[0];
   async function changePassword(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending) return;
@@ -44,7 +44,7 @@ export function AccountSettings({ account, language, onExpired }: {
     <div className="page-heading"><h1>{t('Profile settings', 'پروفائل کی ترتیبات')}</h1></div>
     <section className="panel settings-identity" aria-label={t('Your profile', 'آپ کا پروفائل')}>
       <span className="dashboard-hero-icon"><UserRound size={24} aria-hidden="true" /></span>
-      <div><h2 dir="auto">{name}</h2><p dir="auto">{account.email}</p></div>
+      <div><h2 dir="auto">{name}</h2><p dir="auto">{account.email}</p>{account.phone_number && <p dir="ltr">{account.phone_number}</p>}</div>
     </section>
     <section className="panel settings-password">
       <h2><KeyRound size={20} aria-hidden="true" />{t('Change password', 'پاس ورڈ تبدیل کریں')}</h2>
