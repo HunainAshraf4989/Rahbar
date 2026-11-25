@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import type { Language } from "./copy";
 import type { Account } from "./api/contracts.generated";
+import { WhatsAppTutor } from "./WhatsAppTutor";
 import relayPreview from "../../../asset_gen/out/relay_4pin_cutaway.png";
 
 const questions = [
@@ -227,6 +228,7 @@ export function Platform({
               <dd>{t("Pending", "باقی ہے")}</dd>
             </div>
           </dl>
+          <WhatsAppTutor language={language} />
         </>
       )}
       {page === "quiz" && (
